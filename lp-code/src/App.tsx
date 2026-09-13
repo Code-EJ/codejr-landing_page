@@ -26,6 +26,18 @@ const testimonials: TestimonialCardProps[] = [
     text: 'Recomendo de olhos fechados! Layout impecável e código limpo.',
     authorName: 'João Pedro',
   },
+  {
+    text: 'A equipe da Code é extremamente profissional e dedicada. Eles realmente se importam com o sucesso do projeto.',
+    authorName: 'Ana Beatriz',
+    authorRole: 'Gerente de Marketing',
+    rating: 5,
+  },
+  {
+    text: 'A Code transformou nossa ideia em realidade de forma rápida e eficiente. Estamos muito satisfeitos com o resultado final.',
+    authorName: 'Lucas Oliveira',
+    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
+    rating: 4,
+  },
 ];
 
 function App() {

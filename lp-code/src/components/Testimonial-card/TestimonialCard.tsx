@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState, type PointerEvent } from 'react';
 import styles from './TestimonialCard.module.css';
 
 export interface TestimonialCardProps {
@@ -15,12 +15,71 @@ function getInitials(name: string) {
 
 export function TestimonialCard({ text, authorName, authorRole, avatarUrl, rating }: TestimonialCardProps) {
   const [failedAvatarUrl, setFailedAvatarUrl] = useState<string>();
+  const [expanded, setExpanded] = useState(false);
+  const [canExpand, setCanExpand] = useState(false);
+  const cardRef = useRef<HTMLElement>(null);
+  const pointerBounds = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const textId = useId();
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        card.dataset.visible = 'true';
+        observer.disconnect();
+      }
+    }, { threshold: 0.1 });
+    card.dataset.visible = 'pending';
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const paragraph = textRef.current;
+    if (!paragraph) return;
+    const measure = () => {
+      const lineHeight = Number.parseFloat(getComputedStyle(paragraph).lineHeight);
+      setCanExpand(paragraph.scrollHeight > lineHeight * 4 + 1);
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(paragraph);
+    return () => observer.disconnect();
+  }, [text]);
+
+  const moveLight = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Keep the reference plane stable: measuring the rotated card on every move
+    // would make the tilt feed back into its own coordinates.
+    if (!pointerBounds.current) {
+      const rect = event.currentTarget.getBoundingClientRect();
+      pointerBounds.current = { left: rect.left + window.scrollX, top: rect.top + window.scrollY, width: rect.width, height: rect.height };
+    }
+    const bounds = pointerBounds.current;
+    const x = Math.max(0, Math.min(1, (event.pageX - bounds.left) / Math.max(1, bounds.width)));
+    const y = Math.max(0, Math.min(1, (event.pageY - bounds.top) / Math.max(1, bounds.height)));
+    event.currentTarget.style.setProperty('--light-x', `${x * 100}%`);
+    event.currentTarget.style.setProperty('--light-y', `${y * 100}%`);
+    event.currentTarget.style.setProperty('--rotate-x', `${(0.5 - y) * 12}deg`);
+    event.currentTarget.style.setProperty('--rotate-y', `${(x - 0.5) * 12}deg`);
+  };
+
+  const resetTilt = () => {
+    pointerBounds.current = null;
+    cardRef.current?.style.removeProperty('--rotate-x');
+    cardRef.current?.style.removeProperty('--rotate-y');
+    cardRef.current?.style.removeProperty('--light-x');
+    cardRef.current?.style.removeProperty('--light-y');
+  };
   const normalizedRating = rating === undefined || !Number.isFinite(rating)
     ? undefined
     : Math.max(0, Math.min(5, Math.round(rating)));
 
   return (
-    <article className={styles.card}>
+    <article ref={cardRef} className={styles.card} onPointerEnter={moveLight} onPointerMove={moveLight} onPointerLeave={resetTilt} onPointerCancel={resetTilt}>
       {normalizedRating !== undefined && (
         <div className={styles.starsContainer} aria-label={`Avaliação de ${normalizedRating} de 5 estrelas`} role="img">
           {Array.from({ length: 5 }, (_, index) => (
@@ -38,7 +97,19 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
       )}
 
       <div className={styles.quoteMark} aria-hidden="true">“</div>
-      <p className={styles.text} title={text}>{text}</p>
+      <p ref={textRef} id={textId} className={`${styles.text} ${expanded ? styles.textExpanded : ''}`} title={text}>{text}</p>
+      {canExpand && (
+        <button
+          type="button"
+          className={styles.readMore}
+          aria-expanded={expanded}
+          aria-controls={textId}
+          onClick={() => { resetTilt(); setExpanded((value) => !value); }}
+        >
+          {expanded ? 'Ler menos' : 'Ler depoimento completo'}
+          <span aria-hidden="true" className={styles.toggleIcon}>{expanded ? '−' : '+'}</span>
+        </button>
+      )}
 
       <div className={styles.footer}>
         {avatarUrl && avatarUrl !== failedAvatarUrl ? (

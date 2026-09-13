@@ -1,8 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestimonialCard } from './TestimonialCard';
 
 describe('TestimonialCard', () => {
+  afterEach(() => vi.restoreAllMocks());
   const baseProps = { text: 'Melhor empresa júnior do Brasil!', authorName: 'Enzo Ribas' };
 
   it('renderiza todas as informações e os atributos acessíveis', () => {
@@ -64,5 +65,25 @@ describe('TestimonialCard', () => {
   it('identifica o autor ausente no fallback', () => {
     render(<TestimonialCard text={baseProps.text} authorName="  " />);
     expect(screen.getByRole('img', { name: 'Autor não informado' })).toHaveTextContent('?');
+  });
+
+  it('permite expandir e recolher um depoimento truncado', () => {
+    vi.spyOn(globalThis, 'getComputedStyle').mockReturnValue({ lineHeight: '24px' } as CSSStyleDeclaration);
+    vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(240);
+    render(<TestimonialCard {...baseProps} />);
+    const button = screen.getByRole('button', { name: 'Ler depoimento completo' });
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+    expect(button).toHaveAttribute('aria-controls', screen.getByText(baseProps.text).id);
+    fireEvent.click(button);
+    expect(screen.getByRole('button', { name: 'Ler menos' })).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(button);
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('não oferece expansão quando o texto cabe em quatro linhas', () => {
+    vi.spyOn(globalThis, 'getComputedStyle').mockReturnValue({ lineHeight: '24px' } as CSSStyleDeclaration);
+    vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(48);
+    render(<TestimonialCard {...baseProps} />);
+    expect(screen.queryByRole('button', { name: /Ler/ })).not.toBeInTheDocument();
   });
 });
