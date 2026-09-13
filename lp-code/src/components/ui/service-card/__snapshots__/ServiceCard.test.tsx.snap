@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ServiceCard component > matches snapshot 1`] = `
+<div>
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center"
+  >
+    <div
+      class="
+        absolute
+        inset-0
+        bg-black/60
+        backdrop-blur-sm
+      "
+    />
+    <div
+      class="relative w-[500px] rounded-lg overflow-hidden border-b border-white/20 bg-gradient-to-br from-[#1C0E22] via-[#3a003a] to-[#450539]"
+    >
+      <div
+        class="
+          flex items-center justify-between
+          px-3 py-1.5
+
+          text-md text-white/80
+
+          bg-[#72008E]/30
+          backdrop-blur-md
+          
+          "
+      >
+        <span>
+          Frontend Development
+        </span>
+        <button
+          class="text-white/60 hover:text-white transition"
+        >
+          [×]
+        </button>
+      </div>
+      <div
+        class="h-40 w-full"
+      />
+    </div>
+  </div>
+</div>
+`;

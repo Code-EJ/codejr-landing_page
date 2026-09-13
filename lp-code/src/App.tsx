@@ -1,35 +1,111 @@
-import { useEffect } from 'react';
-import Lenis from 'lenis';
-import 'lenis/dist/lenis.css';
-import Carousel from './components/Carousel/carousel';
-import type { CarouselItem } from './components/Carousel/types';
-import styles from './App.module.css';
+import bg from './assets/BG.png';
+import HeroRoot from './components/hero-section/HeroRoot';
+import { TestimonialCard, type TestimonialCardProps } from './components/Testimonial-card/TestimonialCard';
+import { Container } from './components/ui/container/Container';
+import { Button } from './components/ui/button/Button';
+import { FileExplorer } from './components/ui/file-explorer/FileExplorer';
+import { Footer } from './components/ui/footer/Footer';
+import { Navbar } from './components/ui/navbar/NavBar';
+import { ScrollIndicator } from './components/ui/scroll-indicator/ScrollIndicator';
 
-const items: CarouselItem[] = [
-  { id: 'nature', type: 'image', src: 'https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630', alt: 'Árvore em um campo aberto', title: 'Uma nova perspectiva' },
-  { id: 'idea', type: 'text', content: <div><p className={styles.kicker}>DESIGN + TECNOLOGIA</p><h2 className={styles.slideTitle}>Sua próxima ideia.<br /><span>Uma nova experiência.</span></h2><p className={styles.slideDescription}>Interfaces que conectam pessoas, com cuidado em cada interação.</p></div> },
-  { id: 'butterfly', type: 'image', src: 'https://img.freepik.com/free-photo/closeup-shot-beautiful-butterfly-with-interesting-textures-orange-petaled-flower_181624-7640.jpg?semt=ais_hybrid&w=740&q=80', alt: 'Borboleta pousada em uma flor', title: 'A diferença está nos detalhes' },
+const testimonials: TestimonialCardProps[] = [
+  {
+    text: 'Melhor empresa júnior do Brasil!',
+    authorName: 'Enzo Ribas',
+    authorRole: 'Diretor de Projetos',
+    avatarUrl: 'https://github.com/github.png',
+    rating: 5,
+  },
+  {
+    text: 'Trabalho excepcional e entrega muito rápida. A Code superou todas as nossas expectativas e elevou o nível do nosso produto.',
+    authorName: 'Maria Silva',
+    authorRole: 'CEO na Tech Solutions',
+    rating: 4,
+  },
+  {
+    text: 'Recomendo de olhos fechados! Layout impecável e código limpo.',
+    authorName: 'João Pedro',
+  },
+  {
+    text: 'A equipe da Code é extremamente profissional e dedicada. Eles realmente se importam com o sucesso do projeto.',
+    authorName: 'Ana Beatriz',
+    authorRole: 'Gerente de Marketing',
+    rating: 5,
+  },
+  {
+    text: 'A Code transformou nossa ideia em realidade de forma rápida e eficiente. Estamos muito satisfeitos com o resultado final.',
+    authorName: 'Lucas Oliveira',
+    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
+    rating: 4,
+  },
 ];
 
-export default function App() {
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let lenis: Lenis | undefined;
-    const sync = () => {
-      lenis?.destroy();
-      lenis = media.matches ? undefined : new Lenis({ autoRaf: true, anchors: true, lerp: 0.08 });
-    };
-    sync();
-    media.addEventListener('change', sync);
-    return () => { media.removeEventListener('change', sync); lenis?.destroy(); };
-  }, []);
-  return <main className={styles.page}>
-    <div className={styles.orb} aria-hidden="true" />
-    <header className={styles.header}><span className={styles.brand}>CODE<span>[]</span></span><span className={styles.tag}>Design. Código. Impacto.</span></header>
-    <section className={styles.showcase} aria-labelledby="gallery-title">
-      <div className={styles.intro}><p className={styles.kicker}>PERSPECTIVAS · CODE JR</p><h1 id="gallery-title">Experiências em <span>movimento.</span></h1><p>Um novo olhar para cada ideia. Explore nossa galeria.</p></div>
-      <Carousel items={items} maxWidth="1000px" label="Explore a galeria" />
-      <p className={styles.hint}>Use as setas para explorar · No celular, deslize para os lados</p>
-    </section>
-  </main>;
+function App() {
+  return (
+    <div className="text-white">
+      <HeroRoot onAnimationComplete={() => {}} />
+      <Navbar />
+
+      <section className="relative h-screen flex items-start pt-12 justify-center text-center overflow-hidden">
+        <div className="fixed inset-0 -z-10">
+          <img src={bg} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/30" />
+          <div
+            className="
+              absolute inset-0
+              bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),
+                  linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)]
+              bg-[size:40px_40px]
+            "
+          />
+        </div>
+
+        <div className="flex flex-col items-center gap-6 px-6">
+          <h1 className="text-6xl md:text-8xl font-semibold tracking-widest">
+            <span className="bg-purple-700 bg-clip-text text-transparent">CODE</span>
+            <span className="text-green-400">[]</span>
+          </h1>
+          <p className="text-2xl md:text-4xl font-semibold text-white/80 max-w-2xl">
+            Transformamos <span className="text-green-400">ideias</span> em soluções{' '}
+            <span className="bg-gradient-to-r from-[#9413F6] to-[#FD0151] bg-clip-text text-transparent">
+              digitais reais
+            </span>
+            .
+          </p>
+          <Button size="lg">
+            <span className="bg-clip-text font-semibold text-lg text-transparent bg-gradient-to-r from-[#9413F6] to-[#FD0151]">
+              Solicitar orçamento
+            </span>
+          </Button>
+        </div>
+
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+          <ScrollIndicator />
+        </div>
+      </section>
+
+      <section className="min-h-screen flex flex-col items-center justify-center gap-24">
+        <Container className="flex justify-center">
+          <div className="py-6">
+            <FileExplorer />
+          </div>
+        </Container>
+      </section>
+
+      <section aria-labelledby="testimonials-title" className="mx-auto w-full max-w-6xl px-4 py-16">
+        <h2 id="testimonials-title" className="mb-8 text-center text-2xl font-bold">
+          O que nossos clientes dizem
+        </h2>
+        <div className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial) => (
+            <TestimonialCard key={testimonial.authorName} {...testimonial} />
+          ))}
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
 }
+
+export default App;
