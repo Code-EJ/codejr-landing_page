@@ -1,109 +1,111 @@
-import { Button } from "./components/ui/button/Button"
-import { Navbar } from "./components/ui/navbar/NavBar"
-import { ScrollIndicator } from "./components/ui/scroll-indicator/ScrollIndicator"
-import { Footer } from "./components/ui/footer/Footer"
-import { FileExplorer } from "./components/ui/file-explorer/FileExplorer"
-import { Container } from "./components/ui/container/Container"
-import bg from "./assets/BG.png"
-import HeroRoot from "./components/hero-section/HeroRoot";
-import { useGSAP } from '@gsap/react'
-import { gsap } from "gsap";
-import Carousel from './components/Carousel/carousel';
-import About from "./sections/About/about";
+import bg from './assets/BG.png';
+import HeroRoot from './components/hero-section/HeroRoot';
+import { TestimonialCard, type TestimonialCardProps } from './components/Testimonial-card/TestimonialCard';
+import { Container } from './components/ui/container/Container';
+import { Button } from './components/ui/button/Button';
+import { FileExplorer } from './components/ui/file-explorer/FileExplorer';
+import { Footer } from './components/ui/footer/Footer';
+import { Navbar } from './components/ui/navbar/NavBar';
+import { ScrollIndicator } from './components/ui/scroll-indicator/ScrollIndicator';
 
-/**
- * App Root
- *
- * - Estrutura principal da aplicação
- * - Seções:
- *    • Hero
- *    • Stack de cards
- *    • Grid de serviços (dentro do Container)
- *    • Footer
- */
+const testimonials: TestimonialCardProps[] = [
+  {
+    text: 'Melhor empresa júnior do Brasil!',
+    authorName: 'Enzo Ribas',
+    authorRole: 'Diretor de Projetos',
+    avatarUrl: 'https://github.com/github.png',
+    rating: 5,
+  },
+  {
+    text: 'Trabalho excepcional e entrega muito rápida. A Code superou todas as nossas expectativas e elevou o nível do nosso produto.',
+    authorName: 'Maria Silva',
+    authorRole: 'CEO na Tech Solutions',
+    rating: 4,
+  },
+  {
+    text: 'Recomendo de olhos fechados! Layout impecável e código limpo.',
+    authorName: 'João Pedro',
+  },
+  {
+    text: 'A equipe da Code é extremamente profissional e dedicada. Eles realmente se importam com o sucesso do projeto.',
+    authorName: 'Ana Beatriz',
+    authorRole: 'Gerente de Marketing',
+    rating: 5,
+  },
+  {
+    text: 'A Code transformou nossa ideia em realidade de forma rápida e eficiente. Estamos muito satisfeitos com o resultado final.',
+    authorName: 'Lucas Oliveira',
+    avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
+    rating: 4,
+  },
+];
+
 function App() {
-
   return (
     <div className="text-white">
-
-      {/* Hero animado: fica pinado no topo e sua animação é conduzida pelo scroll da página */}
       <HeroRoot onAnimationComplete={() => {}} />
-
-      {/* NAVBAR FIXA */}
       <Navbar />
 
-      {/* HERO */}
       <section className="relative h-screen flex items-start pt-12 justify-center text-center overflow-hidden">
-        
-        {/* Background */}
         <div className="fixed inset-0 -z-10">
-          <img
-            src={bg}
-            alt="background"
-            className="w-full h-full object-cover"
-          />
-
-          {/* Overlay escuro */}
+          <img src={bg} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/30" />
-
-          {/* Grid */}
           <div
             className="
-            absolute inset-0
-            bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),
-                linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)]
-            bg-[size:40px_40px]
-          "
+              absolute inset-0
+              bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),
+                  linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)]
+              bg-[size:40px_40px]
+            "
           />
         </div>
 
-        {/* Conteúdo */}
         <div className="flex flex-col items-center gap-6 px-6">
-          
           <h1 className="text-6xl md:text-8xl font-semibold tracking-widest">
-            <span className="bg-purple-700 bg-clip-text text-transparent">
-              CODE
-            </span>
+            <span className="bg-purple-700 bg-clip-text text-transparent">CODE</span>
             <span className="text-green-400">[]</span>
           </h1>
-
           <p className="text-2xl md:text-4xl font-semibold text-white/80 max-w-2xl">
-            Transformamos{" "}
-            <span className="text-green-400">ideias</span> em soluções{" "}
+            Transformamos <span className="text-green-400">ideias</span> em soluções{' '}
             <span className="bg-gradient-to-r from-[#9413F6] to-[#FD0151] bg-clip-text text-transparent">
               digitais reais
-            </span>.
+            </span>
+            .
           </p>
-
           <Button size="lg">
             <span className="bg-clip-text font-semibold text-lg text-transparent bg-gradient-to-r from-[#9413F6] to-[#FD0151]">
               Solicitar orçamento
             </span>
           </Button>
-
         </div>
 
-        {/* Scroll Indicator */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
           <ScrollIndicator />
         </div>
       </section>
 
-      {/* SEÇÃO CARDS + SERVIÇOS */}
       <section className="min-h-screen flex flex-col items-center justify-center gap-24">
-        {/* GRID DE SERVIÇOS DENTRO DO CONTAINER */}
         <Container className="flex justify-center">
           <div className="py-6">
-            <FileExplorer /> 
+            <FileExplorer />
           </div>
         </Container>
-
       </section>
 
-      {/* FOOTER */}
+      <section aria-labelledby="testimonials-title" className="mx-auto w-full max-w-6xl px-4 py-16">
+        <h2 id="testimonials-title" className="mb-8 text-center text-2xl font-bold">
+          O que nossos clientes dizem
+        </h2>
+        <div className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial) => (
+            <TestimonialCard key={testimonial.authorName} {...testimonial} />
+          ))}
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
 }
 
-export default App
+export default App;
