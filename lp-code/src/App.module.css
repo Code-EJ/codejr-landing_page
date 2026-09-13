@@ -1,0 +1,17 @@
+.page { min-height: 115vh; padding: 32px clamp(20px, 6vw, 96px) 96px; background: #100e14; color: #f5efff; position: relative; isolation: isolate; overflow: clip; font-family: system-ui, sans-serif; }
+.page::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at 10% 40%, #813a7926, transparent 55%), radial-gradient(ellipse at 85% 65%, #654ecb20, transparent 50%); }
+.orb { position: absolute; z-index: -1; top: 380px; left: 30%; width: 40%; height: 240px; border-radius: 50%; background: #916381; opacity: 0.15; filter: blur(90px); pointer-events: none; }
+.header { display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: 1200px; margin: auto; }
+.brand { font-weight: 800; font-size: 1.25rem; letter-spacing: 0.16em; }
+.brand span { color: #ba9eeb; margin-left: 5px; }
+.tag { font-size: 0.75rem; color: #a598b5; }
+.showcase { max-width: 1000px; margin: 80px auto 0; }
+.intro { margin-bottom: 48px; text-align: center; }
+.kicker { color: #c2a2e6; font-size: 0.68rem; letter-spacing: 0.2em; font-weight: 650; margin-bottom: 16px; }
+.intro h1 { font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 450; line-height: 1.13; letter-spacing: -0.045em; margin-bottom: 18px; }
+.intro h1 span, .slideTitle span { background: linear-gradient(100deg, #e6b4d9, #b8a4ef); background-clip: text; color: transparent; }
+.intro > p:last-child { color: #b2a6c1; font-size: 0.95rem; line-height: 1.6; }
+.hint { color: #a294b0; text-align: center; font-size: 0.72rem; margin-top: 20px; }
+.slideTitle { font-size: clamp(1.8rem, 4cqw, 3.3rem); font-weight: 650; letter-spacing: -0.035em; line-height: 1.12; margin-bottom: 24px; }
+.slideDescription { max-width: 420px; font-size: 1rem; color: #c4b8d4; }
+@media (max-width: 480px) { .tag { display: none; } .showcase { margin-top: 36px; } }

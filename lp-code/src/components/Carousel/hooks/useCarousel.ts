@@ -1,95 +1,57 @@
-import { useCallback, useEffect, useState } from "react";
-import type { CarouselImage } from "../types";
+import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from 'react';
+import type { CarouselItem } from '../types';
 
 interface UseCarouselParams {
-    images: CarouselImage[]
-    autoPlay: boolean;
-    interval: number;
-    onIndexChange?: (newIndex: number) => void;
+  items: CarouselItem[];
+  autoPlay: boolean;
+  interval: number;
+  onIndexChange?: (newIndex: number) => void;
+  playingId?: string | number | null;
 }
 
-/**
- * @description
- * Hook customizado para gerenciar a lógica de estado, validação e navegação do Carrossel.
- * Abstrai a regra de negócio para fora do componente visual.
- * @param params - Configurações do carrossel (images, autoPlay, interval, onIndexChange)
- * @returns Estados e funções de controle para a UI.
- */
-export function useCarousel(
-    {images, autoPlay, interval, onIndexChange }: UseCarouselParams
-) {
-    const [validImages, setValidImages] = useState<CarouselImage[]>([]);
-    const [index, setIndex] = useState(0);
-    const [loading, setLoading] = useState(true);
+export function useCarousel({ items, autoPlay, interval, onIndexChange, playingId }: UseCarouselParams) {
+  const validItems = useMemo(() => {
+    const seen = new Set<string | number>();
+    return items.filter((item) => {
+      const valid = item.type === 'text'
+        ? item.content !== undefined && item.content !== null && item.content !== false
+        : Boolean(item.src?.trim());
+      if (!valid || seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  }, [items]);
+  const [activeId, setActiveId] = useState<string | number | null>(null);
+  const [direction, setDirection] = useState(1);
+  const index = Math.max(0, validItems.findIndex((item) => item.id === activeId));
+  const total = validItems.length;
 
-    useEffect(() => {
-        if (!images || images.length === 0) {
-            setLoading(false);
-            return;
-        }
+  const goTo = useCallback((target: number) => {
+    if (!total || !Number.isFinite(target)) return;
+    const nextIndex = ((Math.trunc(target) % total) + total) % total;
+    if (nextIndex === index) return;
+    setDirection(target > index ? 1 : -1);
+    setActiveId(validItems[nextIndex].id);
+    onIndexChange?.(nextIndex);
+  }, [index, onIndexChange, total, validItems]);
+  const next = useCallback(() => goTo(index + 1), [goTo, index]);
+  const previous = useCallback(() => goTo(index - 1), [goTo, index]);
 
-        const testImage = (imageObj: CarouselImage) => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = imageObj.src;
-                img.onload = () => resolve(imageObj);
-                img.onerror = () => resolve(null);
-            });
-        };
+  useEffect(() => {
+    if (!autoPlay || total < 2 || (playingId != null && validItems[index]?.id === playingId)) return;
+    const delay = Number.isFinite(interval) ? Math.max(1000, interval) : 3000;
+    const timer = window.setTimeout(next, delay);
+    return () => window.clearTimeout(timer);
+  }, [autoPlay, interval, next, total, playingId, validItems, index]);
 
-        const validateImages = async () => {
-            setLoading(true);
-            const validImages = await Promise.all(images.map(testImage));
-            setValidImages(validImages.filter((v): v is CarouselImage => !!v));
-            setLoading(false);
-        };
-
-        validateImages();
-    }, [images]);
-
-    const next = useCallback(() => {
-        setIndex((prevIndex) => {
-            const novoIndex = (prevIndex + 1) % validImages.length;
-            if (onIndexChange) onIndexChange(novoIndex);
-            return novoIndex;   
-        });
-    }, [onIndexChange, validImages.length]);;
-
-    const previous = useCallback(() => {
-        setIndex((prevIndex) => {
-            const novoIndex = (prevIndex - 1 + validImages.length) % validImages.length;
-            if (onIndexChange) onIndexChange(novoIndex);
-            return novoIndex;   
-        });
-     }, [onIndexChange, validImages.length]);;
-
-    useEffect(() => {
-        if (!autoPlay || validImages.length <= 1) return;
-
-        const timer = setInterval(() => {
-            next();
-        }, interval);
-        
-        return () => clearInterval(timer);
-    }, [autoPlay, validImages.length, next, interval]);
-
-    const handleKeyboard = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.repeat) return;
-        if (e.key === "ArrowLeft") {
-            e.preventDefault();
-            previous();
-        } else if (e.key === "ArrowRight") {
-            e.preventDefault();
-            next();
-        }
-    }, [next, previous]);
-
-    return { 
-        validImages, 
-        index, 
-        loading,
-        next,
-        previous,
-        handleKeyboard
-     };
+  const handleKeyboard = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('input, textarea, select, video, [contenteditable="true"], [role="slider"]')) return;
+    if (event.key === 'ArrowLeft') { event.preventDefault(); previous(); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); next(); }
+    if (event.key === 'Home') { event.preventDefault(); goTo(0); }
+    if (event.key === 'End') { event.preventDefault(); goTo(total - 1); }
+  };
+  return { validItems, index, direction, next, previous, goTo, handleKeyboard };
 }

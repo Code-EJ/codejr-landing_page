@@ -1,29 +1,19 @@
-/**
- * @description
- * Representa a estrutura de dados esperada para cada imagem do carrossel.
- * 
- * @param Parametros: 
- * - `src`: URL da fonte da imagem (ex: caminho local ou URL externa).
- * - `alt`: Texto alternativo para acessibilidade (Leitores de tela) e SEO.
- */
-export interface CarouselImage {
-    src: string;
-    alt: string;
-}
+import type { ReactNode } from 'react';
 
-/**
- * @description
- * Propriedades aceitas pelo componente Carousel.
- * 
- * @param Parametros: 
- * - `images`: Array de objetos do tipo CarouselImage, representando as imagens a serem exibidas.
- * - `autoPlay`: (Opcional) Se verdadeiro, o carrossel avançará automaticamente após um intervalo definido.
- * - `interval`: (Opcional) Tempo em milissegundos entre cada avanço automático (padrão: 3000ms).
- * - `onIndexChange`: (Opcional) Callback que é chamado sempre que o índice da imagem atual muda, recebendo o novo índice como argumento.
- */
+export type MediaType = 'image' | 'video' | 'text';
+type BaseItem = { id: string | number; alt?: string; title?: string };
+export type CarouselItem = BaseItem & (
+  | { type: 'image'; src: string }
+  | { type: 'video'; src: string; videoProps?: { autoPlay?: boolean; muted?: boolean; loop?: boolean; controls?: boolean; poster?: string } }
+  | { type: 'text'; content: ReactNode }
+);
+
 export interface CarouselProps {
-    images: CarouselImage[];
-    autoPlay?: boolean;
-    interval?: number;
-    onIndexChange?: (newIndex: number) => void;
+  items: CarouselItem[];
+  autoPlay?: boolean;
+  interval?: number;
+  onIndexChange?: (newIndex: number) => void;
+  maxWidth?: string | number;
+  height?: string | number;
+  label?: string;
 }

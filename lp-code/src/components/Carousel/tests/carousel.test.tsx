@@ -1,158 +1,125 @@
-import React from 'react';
-// IMPORTAMOS O CLEANUP AQUI:
-import { render, screen, fireEvent, act, waitFor, cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom/vitest';
-import { describe, it, expect, beforeAll, afterEach, vi } from 'vitest';
+import { StrictMode } from 'react';
+import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
+import { describe, it, expect, afterEach, vi } from 'vitest';
 import Carousel from '../carousel';
-import { type CarouselImage } from '../types';
+import type { CarouselItem } from '../types';
+import gsap from 'gsap';
+import styles from '../Carousel.module.css';
 
-// =========================================================================
-// MOCKS GLOBAIS
-// =========================================================================
-
-vi.mock('gsap', () => ({
-    default: {
-        registerPlugin: vi.fn(),
-        fromTo: vi.fn(),
-        isTweening: vi.fn(() => false),
-    }
-}));
-
-vi.mock('@gsap/react', () => ({
-    useGSAP: (callback: () => void) => {
-        React.useEffect(() => { callback(); }, [callback]);
-    }
-}));
-
-const mockImageOnload = () => {
-    // @ts-ignore
-    global.Image = class {
-        onload: () => void;
-        onerror: () => void;
-        src: string;
-        
-        constructor() {
-            this.onload = vi.fn();
-            this.onerror = vi.fn();
-            this.src = '';
-            setTimeout(() => {
-                if (this.onload) this.onload();
-            }, 0);
-        }
-    };
-};
-
-const mockImages: CarouselImage[] = [
-    { src: 'img1.png', alt: 'Cadeira Gamer' },
-    { src: 'img2.png', alt: 'Mesa de Escritório' },
-    { src: 'img3.png', alt: 'Monitor Curvo' }
+const items: CarouselItem[] = [
+  { id: 'one', type: 'image', src: '/one.png', alt: 'Primeira imagem' },
+  { id: 'two', type: 'text', content: 'Segundo conteúdo' },
+  { id: 'three', type: 'video', src: '/three.mp4', alt: 'Vídeo de exemplo', videoProps: { controls: true } },
 ];
 
-describe('Componente <Carousel />', () => {
-    
-    beforeAll(() => {
-        mockImageOnload();
-    });
+afterEach(() => { cleanup(); vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
-    afterEach(() => {
-        vi.clearAllMocks();
-        vi.useRealTimers();
-        cleanup(); // LIMPA O DOM ENTRE CADA TESTE! (O Segredo do sucesso)
-    });
-
-    it('deve renderizar o estado de carregamento inicialmente', () => {
-        // Usa o 'container' retornado pelo render em vez do 'screen'
-        const { container } = render(<Carousel images={mockImages} />);
-        
-        // Busca o elemento pela classe CSS, independentemente do texto que estiver dentro
-        const loadingDiv = container.querySelector('.carousel-loading');
-        expect(loadingDiv).toBeInTheDocument();
-    });
-
-    it('deve renderizar o estado de lista vazia caso não haja imagens', async () => {
-        render(<Carousel images={[]} />);
-        await waitFor(() => {
-            // Regex ajustado para pegar parte da frase independente do que você digitar lá
-            expect(screen.getByText(/Nenhuma imagem pôde ser carregada./i)).toBeInTheDocument();
-        });
-    });
-
-    it('deve renderizar as imagens corretamente após validação', async () => {
-        render(<Carousel images={mockImages} />);
-
-        await waitFor(() => {
-            const imagens = screen.getAllByRole('img');
-            expect(imagens.length).toBeGreaterThan(0);
-        });
-
-        // Pega todas as imagens renderizadas no track
-        const imagens = screen.getAllByRole('img') as HTMLImageElement[];
-        
-        // Verifica se a imagem central (atual) é a img1
-        expect(imagens[1].src).toContain('img1.png');
-    });
-
-    it('deve navegar para a PRÓXIMA imagem ao clicar no botão direito', async () => {
-        render(<Carousel images={mockImages} />);
-        await waitFor(() => screen.getByLabelText('Próxima imagem'));
-        
-        const nextButton = screen.getByLabelText('Próxima imagem');
-        
-        act(() => {
-            fireEvent.click(nextButton);
-        });
-
-        const imagens = screen.getAllByRole('img') as HTMLImageElement[];
-        // Após clicar em próximo, a imagem central deve ser a img2
-        expect(imagens[1].src).toContain('img2.png');
-    });
-
-    it('deve navegar por EVENTOS DE TECLADO (Setas Direcionais)', async () => {
-        const { container } = render(<Carousel images={mockImages} />);
-        
-        await waitFor(() => {
-            expect(screen.getAllByRole('img').length).toBe(3);
-        });
-        
-        const carouselWrapper = container.querySelector('.carousel-container') as HTMLElement;
-        
-        act(() => {
-            carouselWrapper.focus(); // Foca no carrossel
-            fireEvent.keyDown(carouselWrapper, { key: 'ArrowRight', code: 'ArrowRight' });
-        });
-
-        let imagens = screen.getAllByRole('img') as HTMLImageElement[];
-        expect(imagens[1].src).toContain('img2.png'); // Imagem do centro virou a img2
-        
-        act(() => {
-            fireEvent.keyDown(carouselWrapper, { key: 'ArrowLeft', code: 'ArrowLeft' });
-        });
-
-        imagens = screen.getAllByRole('img') as HTMLImageElement[];
-        expect(imagens[1].src).toContain('img1.png'); // Voltou para a img1
-    });
-
-    it('deve respeitar a funcionalidade de autoPlay mudando a imagem com o tempo', async () => {
-        vi.useFakeTimers();
-        const onIndexChangeMock = vi.fn();
-
-        render(
-            <Carousel 
-                images={mockImages} 
-                autoPlay={true} 
-                interval={3000} 
-                onIndexChange={onIndexChangeMock}
-            />
-        );
-
-        await act(async () => {
-            vi.advanceTimersByTime(10); // resolve o mock inicial
-        });
-
-        act(() => {
-            vi.advanceTimersByTime(3000); // acelera o tempo do setInterval
-        });
-
-        expect(onIndexChangeMock).toHaveBeenCalledWith(1);
-    });
+describe('Carousel multimídia', () => {
+  it('coordena saída direcional no GSAP e limpa trocas rápidas ao desmontar', () => {
+    const { container, unmount } = render(<Carousel items={items} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo item' }));
+    const layer = container.querySelector(`.${styles.exitLayer}`)!;
+    expect(gsap.getTweensOf(layer.firstElementChild!)[0].vars.xPercent).toBe(-18);
+    fireEvent.click(screen.getByRole('button', { name: 'Item anterior' }));
+    const outgoing = layer.firstElementChild!;
+    expect(gsap.getTweensOf(outgoing)[0].vars.xPercent).toBe(18);
+    expect(layer.children).toHaveLength(1);
+    expect(screen.getAllByRole('group')).toHaveLength(1);
+    unmount();
+    expect(gsap.getTweensOf(outgoing)).toHaveLength(0);
+  });
+  it('renderiza imediatamente sem esperar pelo download de todas as mídias', () => {
+    render(<Carousel items={items} />);
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+  });
+  it('navega em loop e informa o índice uma única vez em StrictMode', () => {
+    const callback = vi.fn();
+    render(<StrictMode><Carousel items={items} onIndexChange={callback} /></StrictMode>);
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo item' }));
+    expect(screen.getByText('Segundo conteúdo')).toBeInTheDocument();
+    expect(callback).toHaveBeenCalledExactlyOnceWith(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Item anterior' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Item anterior' }));
+    expect(screen.getByLabelText('Vídeo de exemplo')).toHaveAttribute('controls');
+  });
+  it('usa os indicadores e mantém somente o slide ativo no DOM', () => {
+    render(<Carousel items={items} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Ir para o slide 3' }));
+    expect(screen.getByRole('button', { name: 'Ir para o slide 3' })).toHaveAttribute('aria-current', 'true');
+    expect(screen.queryByAltText('Primeira imagem')).not.toBeInTheDocument();
+  });
+  it('reconcilia a lista menor e a lista vazia', () => {
+    const { rerender } = render(<Carousel items={items} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Ir para o slide 3' }));
+    rerender(<Carousel items={[items[0]]} />);
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Próximo item' })).not.toBeInTheDocument();
+    rerender(<Carousel items={[]} />);
+    expect(screen.getByRole('status')).toHaveTextContent('Nenhum conteúdo disponível.');
+  });
+  it('preserva o item ativo quando a lista é reordenada', () => {
+    const { rerender } = render(<Carousel items={items} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo item' }));
+    rerender(<Carousel items={[items[1], items[0]]} />);
+    expect(screen.getByText('Segundo conteúdo')).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: '1 de 2' })).toBeInTheDocument();
+  });
+  it('aceita zero como conteúdo', () => {
+    render(<Carousel items={[{ id: 0, type: 'text', content: 0 }]} />);
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
+  it('mostra erro recuperável sem bloquear a navegação', () => {
+    render(<Carousel items={items} />);
+    fireEvent.error(screen.getByAltText('Primeira imagem'));
+    expect(screen.getByRole('status')).toHaveTextContent('Não foi possível carregar');
+    fireEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Próximo item' }));
+    expect(screen.getByText('Segundo conteúdo')).toBeInTheDocument();
+  });
+  it('não captura as setas de campos de formulário', () => {
+    render(<Carousel items={[{ id: 0, type: 'text', content: <input aria-label="Mensagem" /> }, items[0]]} />);
+    fireEvent.keyDown(screen.getByLabelText('Mensagem'), { key: 'ArrowRight' });
+    expect(screen.getByLabelText('Mensagem')).toBeInTheDocument();
+    fireEvent.keyDown(screen.getByRole('region'), { key: 'End' });
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+  });
+  it('pausa o autoplay no hover e no foco', () => {
+    vi.useFakeTimers();
+    render(<Carousel items={items} autoPlay interval={1000} />);
+    fireEvent.mouseEnter(screen.getByRole('region'));
+    act(() => vi.advanceTimersByTime(2000));
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+    fireEvent.mouseLeave(screen.getByRole('region'));
+    act(() => vi.advanceTimersByTime(1000));
+    expect(screen.getByText('Segundo conteúdo')).toBeInTheDocument();
+    fireEvent.focus(screen.getByRole('button', { name: 'Próximo item' }));
+    act(() => vi.advanceTimersByTime(2000));
+    expect(screen.getByText('Segundo conteúdo')).toBeInTheDocument();
+  });
+  it('permite pausar explicitamente o autoplay', () => {
+    vi.useFakeTimers();
+    render(<Carousel items={items} autoPlay interval={1000} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar reprodução automática' }));
+    act(() => vi.advanceTimersByTime(2000));
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+  });
+  it('não troca de slide enquanto o vídeo está tocando', () => {
+    vi.useFakeTimers();
+    render(<Carousel items={[items[2], items[0]]} autoPlay interval={1000} />);
+    fireEvent.play(screen.getByLabelText('Vídeo de exemplo'));
+    act(() => vi.advanceTimersByTime(2000));
+    expect(screen.getByLabelText('Vídeo de exemplo')).toBeInTheDocument();
+    fireEvent.pause(screen.getByLabelText('Vídeo de exemplo'));
+    act(() => vi.advanceTimersByTime(1000));
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+  });
+  it('respeita a preferência por movimento reduzido', () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    vi.useFakeTimers();
+    render(<Carousel items={items} autoPlay interval={1000} />);
+    act(() => vi.advanceTimersByTime(3000));
+    expect(screen.getByAltText('Primeira imagem')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /reprodução automática/ })).not.toBeInTheDocument();
+  });
 });
