@@ -1,79 +1,68 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { TestimonialCard } from './TestimonialCard';
 
-describe('TestimonialCard Component', () => {
-  // Objeto de mock básico (Mock Data) usado para não repetir código em cada teste
-  const baseProps = {
-    text: 'Melhor empresa júnior do Brasil!',
-    authorName: 'Enzo Ribas',
-  };
+describe('TestimonialCard', () => {
+  const baseProps = { text: 'Melhor empresa júnior do Brasil!', authorName: 'Enzo Ribas' };
 
-  it('Deve renderizar corretamente com todas as props completas', () => {
-    // 1. Arrange: Prepara a renderização do componente com todas as props
-    render(
-      <TestimonialCard
-        {...baseProps}
-        authorRole="Diretor de Projetos"
-        avatarUrl="https://github.com/github.png"
-        rating={4}
-      />
-    );
-
-    // 2. Act & Assert: Verifica se os textos existem na tela
-    expect(screen.getByText(/Melhor empresa júnior do Brasil!/i)).toBeInTheDocument();
-    expect(screen.getByText('Enzo Ribas')).toBeInTheDocument();
+  it('renderiza todas as informações e os atributos acessíveis', () => {
+    render(<TestimonialCard {...baseProps} authorRole="Diretor de Projetos" avatarUrl="https://github.com/github.png" rating={4} />);
+    expect(screen.getByText(baseProps.text)).toHaveAttribute('title', baseProps.text);
     expect(screen.getByText('Diretor de Projetos')).toBeInTheDocument();
-
-    // 3. Assert: Valida a imagem, checando se possui o atributo ALT descritivo
-    const avatar = screen.getByAltText('Foto de perfil de Enzo Ribas');
-    expect(avatar).toBeInTheDocument();
-    expect(avatar).toHaveAttribute('src', 'https://github.com/github.png');
-
-    // 4. Assert: Verifica se o acessibilidade das estrelas foi aplicada
-    // Estamos procurando um elemento que seja uma "imagem" cujo nome (aria-label) corresponda.
-    expect(
-      screen.getByRole('img', { name: 'Avaliação de 4 de 5 estrelas' })
-    ).toBeInTheDocument();
+    expect(screen.getByAltText('Foto de perfil de Enzo Ribas')).toHaveAttribute('src', 'https://github.com/github.png');
+    expect(screen.getByRole('img', { name: 'Avaliação de 4 de 5 estrelas' })).toBeInTheDocument();
   });
 
-  it('Deve renderizar corretamente sem as props opcionais', () => {
-    // 1. Arrange: Renderiza APENAS com nome e texto (props obrigatórias da Interface)
+  it('omite props opcionais e exibe as iniciais acessíveis', () => {
     render(<TestimonialCard {...baseProps} />);
-
-    // 2. Assert: Textos obrigatórios devem existir
-    expect(screen.getByText('Enzo Ribas')).toBeInTheDocument();
-
-    // 3. Assert: O Cargo (que não foi passado) NÃO deve existir no DOM
     expect(screen.queryByText('Diretor de Projetos')).not.toBeInTheDocument();
-
-    // 4. Assert: Container de avaliação (estrelas) NÃO deve existir
-    expect(
-      screen.queryByRole('img', { name: /Avaliação de/i })
-    ).not.toBeInTheDocument();
-
-    // 5. Assert: O Fallback de avatar (Iniciais) DEVE estar visível (já que não foi passado um avatarUrl)
-    expect(screen.getByText('ER')).toBeInTheDocument();
+    expect(screen.queryByRole('img', { name: /Avaliação de/i })).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Iniciais de Enzo Ribas')).toHaveTextContent('ER');
   });
 
-  it('Deve exibir fallback (iniciais) quando a imagem do avatar falhar ao carregar (Edge Case)', () => {
-    // 1. Arrange: Renderiza com um link de imagem de propósito quebrado ou inválido
-    render(
-      <TestimonialCard
-        {...baseProps}
-        avatarUrl="https://url-quebrada.com/imagem.png"
-      />
-    );
+  it.each([{ rating: 3.6, expected: 4 }, { rating: -2, expected: 0 }, { rating: 8, expected: 5 }])(
+    'normaliza a nota $rating para $expected',
+    ({ rating, expected }) => {
+      render(<TestimonialCard {...baseProps} rating={rating} />);
+      expect(screen.getByRole('img', { name: `Avaliação de ${expected} de 5 estrelas` })).toBeInTheDocument();
+    },
+  );
 
-    // No primeiro momento, a tag <img> é montada no DOM
-    const image = screen.getByAltText('Foto de perfil de Enzo Ribas');
-    expect(image).toBeInTheDocument();
+  it.each([
+    { authorName: 'Alice', expected: 'A' },
+    { authorName: '  Maria   Silva  ', expected: 'MS' },
+    { authorName: 'João Pedro da Silva', expected: 'JP' },
+  ])('gera as iniciais de "$authorName"', ({ authorName, expected }) => {
+    render(<TestimonialCard text={baseProps.text} authorName={authorName} />);
+    expect(screen.getByRole('img', { name: `Iniciais de ${authorName.trim().replace(/\s+/g, ' ')}` })).toHaveTextContent(expected);
+  });
 
-    // 2. Act: Dispara o evento de erro nativo do HTML para simular uma falha de rede/link quebrado
-    fireEvent.error(image);
+  it('oculta cada estrela decorativa dos leitores de tela', () => {
+    const { container } = render(<TestimonialCard {...baseProps} rating={5} />);
+    expect(container.querySelectorAll('svg[aria-hidden="true"]')).toHaveLength(5);
+  });
 
-    // 3. Assert: O estado muda, a imagem desaparece e o fallback (as letras ER) assume o lugar
-    expect(screen.getByText('ER')).toBeInTheDocument();
+  it('exibe o fallback acessível quando o avatar falha', () => {
+    render(<TestimonialCard {...baseProps} avatarUrl="https://url-quebrada.com/imagem.png" />);
+    fireEvent.error(screen.getByAltText('Foto de perfil de Enzo Ribas'));
+    expect(screen.getByLabelText('Iniciais de Enzo Ribas')).toHaveTextContent('ER');
     expect(screen.queryByAltText('Foto de perfil de Enzo Ribas')).not.toBeInTheDocument();
+  });
+
+  it('tenta carregar um novo avatar depois de uma falha', () => {
+    const { rerender } = render(<TestimonialCard {...baseProps} avatarUrl="/broken.png" />);
+    fireEvent.error(screen.getByAltText('Foto de perfil de Enzo Ribas'));
+    rerender(<TestimonialCard {...baseProps} avatarUrl="/new.png" />);
+    expect(screen.getByAltText('Foto de perfil de Enzo Ribas')).toHaveAttribute('src', '/new.png');
+  });
+
+  it.each([NaN, Infinity, -Infinity])('omite notas não finitas: %s', (rating) => {
+    render(<TestimonialCard {...baseProps} rating={rating} />);
+    expect(screen.queryByRole('img', { name: /Avaliação de/i })).not.toBeInTheDocument();
+  });
+
+  it('identifica o autor ausente no fallback', () => {
+    render(<TestimonialCard text={baseProps.text} authorName="  " />);
+    expect(screen.getByRole('img', { name: 'Autor não informado' })).toHaveTextContent('?');
   });
 });

@@ -1,120 +1,55 @@
-/* ==========================================================================
-   Estilos do Cartão de Depoimento (TestimonialCard)
-   ========================================================================== */
-
-/* Container principal do cartão.
-   Usa Flexbox em coluna e ocupa 100% da largura e altura (desacoplamento). */
 .card {
+  min-width: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   padding: 2rem;
   border-radius: 1rem;
-  /* Gradiente baseado no design da imagem fornecida */
-  background: linear-gradient(to bottom right, #8B1C31, #46164A);
+  background: linear-gradient(to bottom right, #8b1c31, #46164a);
   color: white;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   font-family: monospace, sans-serif;
 }
 
-/* Container que agrupa as estrelas de avaliação */
-.starsContainer {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
+.starsContainer { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+.star { width: 1.5rem; height: 1.5rem; }
+.starFilled { fill: #ffa41c; }
+.starEmpty { fill: #e5e7eb; }
+.quoteMark { font-size: 1.875rem; font-weight: 700; font-style: italic; }
 
-/* Tamanho base para o ícone de estrela SVG */
-.star {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-/* Cor da estrela preenchida (nota alcançada) */
-.starFilled {
-  fill: #FFA41C;
-}
-
-/* Cor da estrela vazia (nota faltante) */
-.starEmpty {
-  fill: #E5E7EB;
-}
-
-/* Decoração de aspas no topo do cartão */
-.quoteMark {
- 
-  font-size: 1.875rem;
-  font-weight: 700;
-  font-style: italic;
-}
-
-/* Texto principal do depoimento */
 .text {
-  flex-grow: 1; /* Ocupa o espaço livre disponível, empurrando o footer para baixo */
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+  max-height: calc(1.375em * 4);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  overflow-wrap: anywhere;
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.375;
-  margin-bottom: 2rem;
-  
-  /* Limita o texto a 4 linhas. Adiciona reticências (...) automaticamente.
-     Edge Case de Layout (Text Overflow) resolvido aqui. */
+  text-overflow: ellipsis;
   display: -webkit-box;
+  line-clamp: 4;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-/* Estilo para as aspas duplas falsas (//) ao final do texto */
-.textInlineQuote {
-  font-style: italic;
-}
-
-/* Rodapé que contém a foto e informações do autor */
-.footer {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: auto; /* Garante que sempre fique colado no fundo do card */
-}
-
-/* Imagem de avatar do autor */
-.avatar {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 9999px; /* Transforma em círculo perfeito */
-  object-fit: cover; /* Garante que a foto não fique esticada/distorcida */
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-}
-
-/* Fallback: círculo com as iniciais do autor, usado caso a imagem falhe ou não exista */
+.footer { display: flex; align-items: center; gap: 1rem; margin-top: auto; }
+.avatar, .avatarFallback { width: 3.5rem; height: 3.5rem; flex-shrink: 0; border-radius: 9999px; }
+.avatar { object-fit: cover; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06); }
 .avatarFallback {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 9999px;
-  background-color: rgba(0, 0, 0, 0.4); /* Fundo escurecido transparente */
+  flex-shrink: 0;
+  background-color: rgba(0, 0, 0, 0.4);
   color: white;
   font-weight: 700;
   font-size: 1.125rem;
 }
-
-/* Container de texto (Nome e Cargo) ao lado do avatar */
-.authorInfo {
-  display: flex;
-  flex-direction: column;
-}
-
-.authorName {
-  font-weight: 700;
-  font-size: 1.25rem;
-  line-height: 1.25;
-}
-
-.authorRole {
-  font-size: 0.875rem;
-  color: #D1D5DB; /* Cinza claro para não competir com o nome */
-  margin-top: 0.25rem;
-}
+.authorInfo { display: flex; min-width: 0; flex-direction: column; overflow-wrap: anywhere; }
+.authorName { font-weight: 700; font-size: 1.25rem; line-height: 1.25; }
+.authorRole { margin-top: 0.25rem; color: #d1d5db; font-size: 0.875rem; }
