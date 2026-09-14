@@ -18,6 +18,8 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
       const camera = scene.querySelector('[data-camera]');
       const lid = scene.querySelector('[data-lid]');
       const hardware = scene.querySelectorAll<HTMLElement>('[data-hardware]');
+      const shell = scene.querySelectorAll('[data-shell]');
+      const base = scene.querySelector('[data-base]');
       const screen = scene.querySelector<HTMLElement>('[data-display]');
       if (!camera || !lid || !screen) return;
       scene.dataset.animated = 'true';
@@ -34,7 +36,8 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
       reserveContent();
       const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(reserveContent);
       observer?.observe(content);
-      const screenReady = .92;
+      const screenReady = .9;
+      const hardwareExitStart = .76;
       let hasEntered = false;
       const timeline = gsap.timeline({
         defaults: { ease: 'none' },
@@ -47,9 +50,8 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
         },
         scrollTrigger: {
           trigger: scene, start: 'top top',
-          end: () => `+=${window.innerHeight * (window.innerWidth < 760 ? 2 : 2.8)}`,
-          // Lenis already smooths the scroll. A second scrub delay allowed
-          // the pin to release while the camera was still catching up.
+          end: () => `+=${window.innerHeight * (window.innerWidth < 760 ? 2.1 : 3)}`,
+          // Lenis provides smoothing; do not let a delayed scrub outlive the pin.
           pin: true, scrub: true, anticipatePin: 1,
           onToggle: self => gsap.set([camera, lid], { willChange: self.isActive ? 'transform' : 'auto' }),
         },
@@ -58,9 +60,19 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
         { z: mobile ? -160 : -850, scale: cameraScale, rotationX: -6, y: window.innerHeight * (mobile ? .24 : .1), duration: .35 })
         .fromTo(lid, { rotationX: -90 }, { rotationX: 0, duration: .35, ease: 'power1.inOut' }, 0)
         .to(camera, { duration: .15 })
-        .to(camera, { z: 0, scale: 1, y: 0, rotationX: 0, duration: screenReady - .5, ease: 'power2.inOut' });
-      // Keep units identical on both ends, including the first playback.
-      timeline.to(scene, { '--display-height': `${window.innerHeight}px`, duration: screenReady - .5, ease: 'power2.inOut' }, .5)
+        // One pixel of overscan absorbs fractional pin positioning at browser zoom.
+        .to(camera, { z: 0, scale: 1, y: -1, rotationX: 0, duration: screenReady - .5, ease: 'power2.inOut' });
+      // Expand only the physical bezel opening by 24px per side. This accounts
+      // for its negative Z, border/shadow and subpixel projection at full zoom.
+      // The deck moves below the screen before arrival; neither surface fades.
+      timeline.to(shell, {
+        scaleX: 1 + 48 / window.innerWidth,
+        scaleY: 1 + 48 / window.innerHeight,
+        transformOrigin: '50% 50%',
+        duration: .12, ease: 'power2.inOut',
+      }, hardwareExitStart)
+        .to(base, { y: 36, duration: .12, ease: 'power2.inOut' }, hardwareExitStart)
+        .to(scene, { '--display-height': `${window.innerHeight + 2}px`, duration: screenReady - .5, ease: 'power2.inOut' }, .5)
         .to(content, { scale: 1, y: 0, duration: screenReady - .5, ease: 'power2.inOut' }, .5)
         // The completed viewport settles before normal document scroll resumes.
         .to(camera, { duration: 1 - screenReady }, screenReady);

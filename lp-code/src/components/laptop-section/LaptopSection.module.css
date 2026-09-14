@@ -1,10 +1,12 @@
 .scene {
   position: relative;
   width: 100%;
+  overflow: clip;
 }
 .camera,
 .lid {
   position: relative;
+  overflow: visible;
 }
 .frame,
 .back,
@@ -18,11 +20,13 @@
 .scene[data-animated] .camera {
   transform-style: preserve-3d;
   transform-origin: 50% 0;
+  overflow: visible;
 }
 .scene[data-animated] .lid {
   transform-style: preserve-3d;
   height: var(--display-height);
   transform-origin: 50% 100%;
+  overflow: visible;
 }
 .scene[data-animated] .display {
   position: relative;
@@ -32,6 +36,7 @@
   overflow: hidden;
   overflow: clip;
   contain: paint;
+  border-radius: 0;
 }
 .scene[data-entered="true"] .display {
   overflow: visible;
