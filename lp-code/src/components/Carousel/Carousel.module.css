@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: 28px;
   position: relative;
-  color: #f5f3f7;
+  color: var(--text-primary);
   container-type: inline-size;
 }
 .header {
@@ -49,37 +49,23 @@
   perspective: 1400px;
 }
 .slideShell {
+  --light-x: var(--glare-x, 20%);
+  --light-y: var(--glare-y, 0%);
   position: absolute;
   inset: 0 12%;
   z-index: 2;
   border-radius: 24px;
   transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   perspective: 1200px;
-  box-shadow: 0 32px 64px -24px #000b;
+
 }
-.slideShell::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  border-radius: inherit;
-  pointer-events: none;
-  border: 1px solid #ffffff36;
-  background: radial-gradient(
-    ellipse at var(--glare-x, 30%) var(--glare-y, 0%),
-    #ffffff16,
-    transparent 62%
-  );
-  box-shadow:
-    inset 0 1px 0 #ffffff55,
-    inset 0 -1px 0 #ffffff10;
-}
+
 .slide {
   position: absolute;
   inset: 0;
   overflow: hidden;
   border-radius: inherit;
-  background: #17131e;
+
   backface-visibility: hidden;
 }
 .exitLayer { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; perspective: 1200px; }
@@ -123,15 +109,14 @@
   filter: saturate(0.55);
 }
 .previewArt {
-  color: #eee5f2;
+
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 20px;
-  background:
-    radial-gradient(ellipse at top left, #63435a55, transparent), #17121e;
+
 }
 .previewArt > span {
   font-size: clamp(1rem, 3cqw, 2rem);
@@ -154,13 +139,11 @@
   padding: clamp(28px, 5cqw, 56px);
   display: grid;
   align-content: safe center;
-  color: #faf5ff;
+
   font-size: clamp(1rem, 3cqw, 1.65rem);
   line-height: 1.55;
   overflow-wrap: anywhere;
-  background:
-    radial-gradient(ellipse at 100% 0%, #61345648, transparent 70%),
-    linear-gradient(130deg, #231b29, #131019);
+
 }
 .caption {
   position: absolute;
@@ -169,16 +152,14 @@
   width: fit-content;
   max-width: calc(100% - 40px);
   padding: 10px 16px;
-  border: 1px solid #ffffff30;
+
   border-radius: 30px;
-  background: linear-gradient(135deg, #ffffff16, #18102160);
-  backdrop-filter: blur(20px) saturate(130%);
-  color: white;
+
+
+
   font-size: 0.75rem;
   pointer-events: none;
-  box-shadow:
-    inset 0 1px 0 #ffffff25,
-    0 4px 15px #0002;
+
 }
 .controls {
   display: flex;
@@ -287,7 +268,7 @@
 @media (hover: hover) and (pointer: fine) {
   .glassButton:hover,
   .playButton:hover {
-    background: linear-gradient(145deg, #ffffff2c, #ffffff0b);
+    border-color: var(--glass-highlight);
   }
   .previewLeft:hover,
   .previewRight:hover {

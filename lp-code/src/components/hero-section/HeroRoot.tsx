@@ -49,23 +49,19 @@ export default function HeroRoot({ onAnimationComplete, className = "" }: HeroRo
         aproxima de rotateX 0.
         */
         gsap.set(textRef.current, {
-          rotateX: 90,
+          rotateX: 35,
           opacity: 0,
-          transformOrigin: "50% -650px",
+          transformOrigin: "50% 0%",
           force3D: true
         });
 
         // --- TIMELINE DE SCROLL ---
         const tl = gsap.timeline({
-          defaults: { ease: "none" },
+          defaults: { ease: "power3.out" },
           scrollTrigger: {
             trigger: containerRef.current,
-            start: "top top",
-            end: "+=150%",
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-            onLeave: () => onAnimationComplete?.(),
+            start: "top 90%",
+            once: true,
           },
         });
 
@@ -84,9 +80,9 @@ export default function HeroRoot({ onAnimationComplete, className = "" }: HeroRo
 
           // vai direto pra Home sem pausa
           .to(
-            containerRef.current, 
-            { scale: 0.94, opacity: 0, duration: 0.3 }, 
-            0.6
+            imageRef.current,
+            { scale: 1.04, duration: 1, onComplete: () => onAnimationComplete?.() },
+            0
           );
 
         return () => {

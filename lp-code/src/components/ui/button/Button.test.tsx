@@ -27,7 +27,7 @@ describe("Button component",
 
     const btn = screen.getByRole("button")
 
-    expect(btn.className).toContain("bg-[#E004DD]/10")
+    expect(btn.className).toContain("glass-action--primary")
     })
 
     /**
@@ -38,7 +38,8 @@ describe("Button component",
 
     const btn = screen.getByRole("button")
 
-    expect(btn.className).toContain("bg-gray-200")
+    expect(btn.className).toContain("liquid-glass")
+    expect(btn.className).not.toContain("glass-action--primary")
     })
 
     /**
