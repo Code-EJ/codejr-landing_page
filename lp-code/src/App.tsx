@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -11,7 +11,7 @@ import { TestimonialCard } from './components/Testimonial-card/TestimonialCard';
 import { FileExplorer } from './components/ui/file-explorer/FileExplorer';
 import { Footer } from './components/ui/footer/Footer';
 import { Navbar } from './components/ui/navbar/NavBar';
-import { Button } from './components/ui/button/Button';
+import { ContactBrief } from './components/contact/ContactBrief';
 import { Card } from './components/ui/card/Card';
 import Carousel from './components/Carousel/carousel';
 import type { CarouselItem } from './components/Carousel/types';
@@ -32,25 +32,6 @@ const quotes = [
   { text: 'Recomendo de olhos fechados! Layout impecável e código limpo.', authorName: 'João Pedro', authorRole: 'Recomendação', rating: 5 },
 ];
 
-function ContactBrief() {
-  const [brief, setBrief] = useState('');
-  const [status, setStatus] = useState('');
-  function prepare(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    setBrief(`Briefing de projeto\nNome: ${data.get('name')}\nInteresse: ${data.get('service')}\n\n${data.get('idea')}`);
-    setStatus('Briefing preparado. Nenhum dado foi enviado.');
-  }
-  return <form className={`liquid-glass ${styles.contactForm}`} onSubmit={prepare}>
-    <label htmlFor="brief-name">Como podemos chamar você?</label><input id="brief-name" name="name" autoComplete="name" required maxLength={100} placeholder="Seu nome" />
-    <label htmlFor="brief-service">O que você quer construir?</label><select id="brief-service" name="service"><option>Site ou landing page</option><option>Aplicação web</option><option>Experiência mobile</option><option>Design de interface</option><option>Dados e integrações</option><option>Quero descobrir com vocês</option></select>
-    <label htmlFor="brief-idea">Conte um pouco da sua ideia</label><textarea id="brief-idea" name="idea" required minLength={10} maxLength={3000} rows={3} placeholder="Qual problema você gostaria de resolver?" />
-    <Button type="submit">Preparar meu briefing <span aria-hidden="true">↗</span></Button>
-    <p className={styles.formNote}>Nesta prévia, o briefing é gerado apenas no seu navegador. O envio será conectado ao canal oficial da CODE.</p>
-    {brief && <div className={styles.briefResult}><label htmlFor="prepared-brief">Seu briefing</label><textarea id="prepared-brief" value={brief} readOnly rows={5} /><Button variant="secondary" type="button" onClick={async () => { try { await navigator.clipboard.writeText(brief); setStatus('Briefing copiado.'); } catch { setStatus('Selecione o briefing acima para copiar manualmente.'); } }}>Copiar briefing</Button></div>}
-    <p className={styles.formStatus} role="status">{status}</p>
-  </form>;
-}
 
 export default function App() {
   const root = useRef<HTMLDivElement>(null);

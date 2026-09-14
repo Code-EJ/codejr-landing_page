@@ -36,7 +36,7 @@ O modelo inicia com tela 16:10 e base de profundidade compatível com a tampa. A
 
 ## Conteúdo e privacidade
 
-Projetos e recomendações demonstrativos são identificados na interface. Devem ser substituídos por casos e depoimentos autorizados antes de publicação comercial. O formulário prepara um briefing local; não envia, armazena persistentemente ou comunica dados a um servidor. A cópia só ocorre por ação explícita no botão.
+Projetos e recomendações demonstrativos são identificados na interface. Devem ser substituídos por casos e depoimentos autorizados antes de publicação comercial. O formulário de contato integra o Web3Forms, com envio explícito e autorizado de nome, e-mail, serviço e mensagem. O envio fica desabilitado até configurar a chave. WhatsApp e e-mail direto usam os contatos provisórios. Consulte `CONTACT.md` para ativação, privacidade e verificação de entrega.
 
 ## Verificação
 
@@ -46,4 +46,4 @@ Build de produção e ESLint dos arquivos desta alteração passaram. A execuç�
 
 `oEnzoRibas` é o principal desenvolvedor e mantenedor desta evolução. O desenvolvimento pertence à Code e aos seus colaboradores.
 
-Próximas etapas: contato oficial/backend, conteúdo real autorizado, revisão de privacidade e validação de produção/CI. Nenhuma dessas integrações é simulada como concluída.
+Próximas etapas: ativar e validar a entrega de e-mail, confirmar os contatos definitivos, conteúdo real autorizado, revisão de privacidade e validação de produção/CI. Backend próprio não é necessário para o fluxo atual.
