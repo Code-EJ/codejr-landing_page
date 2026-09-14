@@ -1,14 +1,14 @@
 /* CODE Liquid Glass — identity and project credit: oEnzoRibas. */
 :root {
   color-scheme: dark;
-  --page-bg: #160b1b;
+  --page-bg: #1b0b20;
   --text-primary: #fff4fa;
   --text-muted: #cbb6ca;
-  --accent: #ed9acb;
-  --brand-purple: #9413f6;
+  --accent: #f39ed7;
+  --brand-purple: #a820f4;
   --brand-magenta: #fd0151;
   --brand-neon: #4ade80;
-  --glass-rgb: 78 17 58;
+  --glass-rgb: 88 18 72;
   --glass-opacity: 0.5;
   --glass-edge: rgb(255 213 239 / 0.24);
   --glass-highlight: rgb(255 255 255 / 0.28);
