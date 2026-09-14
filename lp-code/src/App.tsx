@@ -13,6 +13,8 @@ import { Footer } from './components/ui/footer/Footer';
 import { Navbar } from './components/ui/navbar/NavBar';
 import { ContactBrief } from './components/contact/ContactBrief';
 import { Card } from './components/ui/card/Card';
+import { PartnersMarquee } from './components/partners/PartnersMarquee';
+import { partnerReferences } from './data/partners';
 import Carousel from './components/Carousel/carousel';
 import type { CarouselItem } from './components/Carousel/types';
 import styles from './App.module.css';
@@ -30,6 +32,11 @@ const quotes = [
   { text: 'Melhor empresa júnior do Brasil!', authorName: 'Enzo Ribas', authorRole: 'Diretor de Projetos', rating: 5 },
   { text: 'Trabalho excepcional e entrega muito rápida. A Code superou todas as nossas expectativas e elevou o nível do nosso produto.', authorName: 'Maria Silva', authorRole: 'CEO na Tech Solutions', rating: 4 },
   { text: 'Recomendo de olhos fechados! Layout impecável e código limpo.', authorName: 'João Pedro', authorRole: 'Recomendação', rating: 5 },
+];
+const principles = [
+  { title: 'Produto antes da implementação.', description: 'Mapeamos o problema, os fluxos e as prioridades. Protótipos ajudam a validar o caminho antes de transformá-lo em código.' },
+  { title: 'Engenharia de ponta a ponta.', description: 'Conectamos interfaces responsivas, APIs e dados. Componentes reutilizáveis, testes e documentação fazem parte da construção.' },
+  { title: 'Entrega que pode evoluir.', description: 'Organizamos ambientes e automatizamos publicações. Cada etapa é compartilhada para que a solução acompanhe as necessidades do negócio.' },
 ];
 
 
@@ -64,8 +71,9 @@ export default function App() {
       </section>
       <div className={styles.disciplines} aria-label="Nossas áreas"><span>ESTRATÉGIA</span><i /> <span>DESIGN</span><i /><span>DESENVOLVIMENTO</span><i /><span>EXPERIÊNCIA</span></div>
       <section id="about" className={styles.section}>
-        <div className={styles.sectionHead} data-reveal><p className={styles.eyebrow}>01 / QUEM SOMOS</p><h2>Tecnologia é o meio.<br /><span>As pessoas são o começo.</span></h2><p>Somos a CODE, uma empresa júnior que conecta aprendizado, colaboração e execução para tirar projetos do papel. Construímos junto com você, não à distância.</p></div>
-        <div className={styles.principles}>{[{ title: 'Escutar antes de criar.', description: 'Entendemos o contexto, as pessoas e o que realmente precisa ser resolvido.' }, { title: 'Construir com intenção.', description: 'Unimos design e código em soluções úteis, acessíveis e bem cuidadas.' }, { title: 'Evoluir em parceria.', description: 'Compartilhamos o processo, validamos as decisões e documentamos cada entrega.' }].map((item, index) => <div data-reveal key={item.title}><Card title={item.title} description={item.description} icon={<span className={styles.cardNumber}>0{index + 1} ↗</span>} className={styles.principle} /></div>)}</div>
+        <div className={styles.sectionHead} data-reveal><p className={styles.eyebrow}>01 / QUEM SOMOS</p><h2>Software com propósito.<br /><span>Engenharia em cada decisão.</span></h2><p>Somos a CODE, uma empresa júnior de desenvolvimento de software. Conectamos formação técnica e prática de projeto para construir interfaces, integrar sistemas e transformar dados em informação útil. Do primeiro fluxo à publicação, design e engenharia trabalham juntos.</p></div>
+        <div className={styles.principles}>{principles.map((item, index) => <div data-reveal key={item.title}><Card title={item.title} description={item.description} icon={<span className={styles.cardNumber}>0{index + 1} ↗</span>} className={styles.principle} /></div>)}</div>
+        <div className={styles.aboutHighlights} data-reveal><div><span className={styles.statusDot} /><strong>Da necessidade à operação.</strong><p>Uma solução sob medida começa pelo contexto, não pela escolha da ferramenta.</p></div><ul aria-label="Focos técnicos da CODE">{['UX e acessibilidade', 'Web e mobile', 'APIs e integrações', 'Dados e automação'].map(focus => <li key={focus}>{focus}</li>)}</ul></div>
       </section>
       <LaptopSection><section aria-label="Serviços" className={styles.section}>
         <div className={styles.splitHead}><div><p className={styles.eyebrow}>02 / O QUE CONSTRUÍMOS</p><h2>Abra uma pasta.<br /><span>Descubra um caminho.</span></h2></div><p>Explore nossas especialidades e encontre o ponto de partida para a sua próxima ideia.</p></div><FileExplorer />
@@ -74,7 +82,9 @@ export default function App() {
         <div className={styles.splitHead} data-reveal><div><p className={styles.eyebrow}>03 / POSSIBILIDADES EM TELA</p><h2>Uma ideia pode<br /><span>ganhar muitas formas.</span></h2></div><p>Uma seleção de conceitos visuais para mostrar como design e tecnologia se encontram. Projetos reais serão adicionados ao portfólio.</p></div><Carousel items={projects} label="Estudos de interface" />
       </section>
       <section id="testimonials" className={styles.section}>
-        <div className={styles.sectionHead} data-reveal><p className={styles.eyebrow}>04 / CONEXÕES QUE IMPORTAM</p><h2>O resultado também<br /><span>está na experiência.</span></h2><p>Espaço reservado para as histórias de quem constrói com a CODE.</p></div>
+        <div className={styles.sectionHead} data-reveal><p className={styles.eyebrow}>04 / CONEXÕES QUE IMPORTAM</p><h2>O resultado também<br /><span>está na experiência.</span></h2><p>Software se constrói em colaboração. Este espaço reúne a experiência de trabalhar com a CODE — da conversa inicial ao cuidado com cada entrega.</p></div>
+        <p className={styles.demoNotice}>Marcas de exemplo para esta prévia visual. Sua presença não indica parceria ou endosso à CODE.</p>
+        <PartnersMarquee partners={partnerReferences} />
         <p className={styles.demoNotice}>Prévia de layout · Os depoimentos abaixo são demonstrativos e serão substituídos por relatos autorizados.</p><div className={styles.testimonials}>{quotes.map(quote => <TestimonialCard key={quote.authorName} {...quote} />)}</div>
       </section>
       <section id="contact" className={`${styles.section} ${styles.contact}`}>
