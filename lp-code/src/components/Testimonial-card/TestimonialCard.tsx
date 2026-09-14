@@ -37,9 +37,16 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
   }, { scope: cardRef });
   const accents = (active: boolean) => contextSafe(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const stars = cardRef.current?.querySelectorAll('svg');
+    const stars = cardRef.current?.querySelectorAll('[data-rating-star="active"]');
     const avatar = cardRef.current?.querySelector('[data-avatar]');
-    if (stars?.length) gsap.to(stars, { y: active ? -2 : 0, duration: .3, stagger: .025, overwrite: 'auto' });
+    if (stars?.length) {
+      gsap.killTweensOf(stars);
+      if (active) gsap.to(stars, { keyframes: [
+        { y: -6, rotation: -12, scale: 1.25, duration: .18, ease: 'power2.out' },
+        { y: 0, rotation: 0, scale: 1.08, duration: .38, ease: 'back.out(1.7)' },
+      ], stagger: .065 });
+      else gsap.to(stars, { y: 0, rotation: 0, scale: 1, duration: .22, overwrite: true });
+    }
     if (avatar) gsap.to(avatar, { scale: active ? 1.04 : 1, duration: .3, overwrite: 'auto' });
   })();
 
@@ -62,12 +69,13 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
     : Math.max(0, Math.min(5, Math.round(rating)));
 
   return (
-    <article ref={cardRef} className={`liquid-glass ${styles.card}`} {...motion} onPointerEnter={() => accents(true)} onPointerLeave={() => { motion.onPointerLeave(); accents(false); }}>
+    <article ref={cardRef} className={`liquid-glass ${styles.card}`} {...motion} onPointerEnter={() => accents(true)} onPointerLeave={() => { motion.onPointerLeave(); accents(false); }} onPointerCancel={() => { motion.onPointerCancel(); accents(false); }} onFocus={() => accents(true)} onBlur={() => { motion.onBlur(); accents(false); }}>
       {normalizedRating !== undefined && (
         <div className={styles.starsContainer} aria-label={`Avaliação de ${normalizedRating} de 5 estrelas`} role="img">
           {Array.from({ length: 5 }, (_, index) => (
             <svg
               key={index}
+              data-rating-star={index < normalizedRating ? 'active' : 'inactive'}
               aria-hidden="true"
               className={`${styles.star} ${index < normalizedRating ? styles.starFilled : styles.starEmpty}`}
               viewBox="0 0 20 20"

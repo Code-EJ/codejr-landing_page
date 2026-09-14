@@ -1,6 +1,7 @@
 .card { min-width: 0; width: 100%; height: 100%; display: flex; flex-direction: column; padding: 28px; font-family: inherit; }
 .starsContainer { display: flex; gap: 4px; margin-bottom: 24px; }
-.star { width: 15px; height: 15px; } .starFilled { fill: #d9c7a6; } .starEmpty { fill: #818ba0; }
+.star { width: 18px; height: 18px; transform-box: fill-box; transform-origin: center; } .starFilled { fill: #ffd43b; filter: drop-shadow(0 0 5px #ffb70066); } .starEmpty { fill: #79657b; }
+.card:hover .starFilled, .card:focus-within .starFilled { fill: #ffe566; filter: drop-shadow(0 0 7px #ffba00aa); }
 .quoteMark { font-size: 2rem; line-height: 1; color: var(--accent); margin-bottom: 8px; }
 .text { flex: 0 0 auto; min-width: 0; max-height: calc(1.65em * 4); overflow: hidden; overflow-wrap: anywhere; font-size: 1.02rem; font-weight: 450; line-height: 1.65; display: -webkit-box; line-clamp: 4; -webkit-line-clamp: 4; -webkit-box-orient: vertical; margin: 0 0 28px; }
 .textExpanded { display: block; max-height: none; -webkit-line-clamp: unset; line-clamp: unset; }
