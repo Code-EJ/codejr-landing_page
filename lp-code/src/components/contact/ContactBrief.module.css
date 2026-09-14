@@ -1,0 +1,30 @@
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+.consent input {
+  width: 18px;
+  min-height: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  accent-color: var(--brand-neon);
+}
+.whatsapp {
+  color: var(--brand-neon);
+  font-size: 0.8rem;
+  text-align: center;
+}
+.email {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+  padding: 8px 0;
+}
+.email:hover {
+  color: var(--text-primary);
+}
