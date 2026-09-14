@@ -1,0 +1,127 @@
+/* CODE Liquid Glass — identity and project credit: oEnzoRibas. */
+:root {
+  color-scheme: dark;
+  --page-bg: #1b0b20;
+  --text-primary: #fff4fa;
+  --text-muted: #cbb6ca;
+  --accent: #f39ed7;
+  --brand-purple: #a820f4;
+  --brand-magenta: #fd0151;
+  --brand-neon: #4ade80;
+  --glass-rgb: 88 18 72;
+  --glass-opacity: 0.5;
+  --glass-edge: rgb(255 213 239 / 0.24);
+  --glass-highlight: rgb(255 255 255 / 0.28);
+  --glass-radius: 24px;
+  --glass-blur: 22px;
+  --glass-shadow: 0 20px 60px -28px rgb(0 0 0 / 0.65);
+  --glass-fill:
+    linear-gradient(
+      135deg,
+      rgb(255 255 255 / 0.07),
+      transparent 48%,
+      rgb(253 1 81 / 0.04)
+    ),
+    rgb(var(--glass-rgb) / var(--glass-opacity));
+}
+[data-glass-theme="light"] {
+  color-scheme: light;
+  --text-primary: #141d31;
+  --text-muted: #414f65;
+  --accent: #5042ac;
+  --glass-rgb: 241 246 255;
+  --glass-edge: rgb(255 255 255 / 0.8);
+  --glass-highlight: rgb(255 255 255 / 0.9);
+  --glass-shadow: 0 20px 50px -30px rgb(35 46 75 / 0.35);
+}
+.liquid-glass {
+  position: relative;
+  isolation: isolate;
+  color: var(--text-primary);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--glass-radius);
+  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 rgb(255 255 255 / 0.06),
+    var(--glass-shadow);
+}
+.liquid-glass::before,
+.liquid-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+}
+.liquid-glass::before {
+  background: radial-gradient(
+    ellipse at var(--light-x, 20%) var(--light-y, 0%),
+    rgb(255 255 255 / 0.12),
+    transparent 62%
+  );
+}
+.liquid-glass::after {
+  background: linear-gradient(
+    120deg,
+    rgb(255 255 255 / 0.08),
+    transparent 24%,
+    transparent 76%,
+    rgb(224 4 221 / 0.05)
+  );
+  box-shadow:
+    inset 1px 0 0 rgb(255 255 255 / 0.12),
+    inset -1px 0 0 rgb(255 255 255 / 0.04);
+}
+.glass-action {
+  --glass-radius: 999px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 22px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.glass-action:hover {
+  border-color: var(--glass-highlight);
+}
+.glass-action--primary {
+  --glass-rgb: 114 0 142;
+}
+.glass-muted {
+  color: var(--text-muted);
+}
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .liquid-glass {
+    background: rgb(var(--glass-rgb) / 0.96);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .liquid-glass {
+    --glass-opacity: 0.96;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (forced-colors: active) {
+  .liquid-glass {
+    background: Canvas;
+    color: CanvasText;
+    border: 1px solid CanvasText;
+    box-shadow: none;
+  }
+  .liquid-glass::before,
+  .liquid-glass::after {
+    display: none;
+  }
+}

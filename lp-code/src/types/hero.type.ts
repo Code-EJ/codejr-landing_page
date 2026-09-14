@@ -14,7 +14,7 @@ export type HeroAnimationDirection = 'left' | 'right' | 'top' | 'bottom';
  */
 export interface HeroRootProps {
   /** Callback disparado automaticamente assim que toda a sequência de animação terminar */
-  onAnimationComplete: () => void;
+  onAnimationComplete?: () => void;
   /** Classe opcional para customização de estilos extras via Tailwind */
   className?: string;
 }

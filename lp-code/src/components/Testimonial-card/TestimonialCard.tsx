@@ -1,5 +1,11 @@
-import { useEffect, useId, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGlassMotion } from '../../hooks/useGlassMotion';
 import styles from './TestimonialCard.module.css';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export interface TestimonialCardProps {
   text: string;
@@ -18,23 +24,31 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
   const [expanded, setExpanded] = useState(false);
   const [canExpand, setCanExpand] = useState(false);
   const cardRef = useRef<HTMLElement>(null);
-  const pointerBounds = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
   const textId = useId();
 
-  useEffect(() => {
-    const card = cardRef.current;
-    if (!card || typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        card.dataset.visible = 'true';
-        observer.disconnect();
-      }
-    }, { threshold: 0.1 });
-    card.dataset.visible = 'pending';
-    observer.observe(card);
-    return () => observer.disconnect();
-  }, []);
+  const motion = useGlassMotion(cardRef, 8);
+  const { contextSafe } = useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.from(cardRef.current, { opacity: 0, duration: .6, clearProps: 'opacity', scrollTrigger: { trigger: cardRef.current, start: 'top 92%', once: true } });
+    });
+    return () => mm.revert();
+  }, { scope: cardRef });
+  const accents = (active: boolean) => contextSafe(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const stars = cardRef.current?.querySelectorAll('[data-rating-star="active"]');
+    const avatar = cardRef.current?.querySelector('[data-avatar]');
+    if (stars?.length) {
+      gsap.killTweensOf(stars);
+      if (active) gsap.to(stars, { keyframes: [
+        { y: -6, rotation: -12, scale: 1.25, duration: .18, ease: 'power2.out' },
+        { y: 0, rotation: 0, scale: 1.08, duration: .38, ease: 'back.out(1.7)' },
+      ], stagger: .065 });
+      else gsap.to(stars, { y: 0, rotation: 0, scale: 1, duration: .22, overwrite: true });
+    }
+    if (avatar) gsap.to(avatar, { scale: active ? 1.04 : 1, duration: .3, overwrite: 'auto' });
+  })();
 
   useEffect(() => {
     const paragraph = textRef.current;
@@ -50,41 +64,18 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
     return () => observer.disconnect();
   }, [text]);
 
-  const moveLight = (event: PointerEvent<HTMLElement>) => {
-    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    // Keep the reference plane stable: measuring the rotated card on every move
-    // would make the tilt feed back into its own coordinates.
-    if (!pointerBounds.current) {
-      const rect = event.currentTarget.getBoundingClientRect();
-      pointerBounds.current = { left: rect.left + window.scrollX, top: rect.top + window.scrollY, width: rect.width, height: rect.height };
-    }
-    const bounds = pointerBounds.current;
-    const x = Math.max(0, Math.min(1, (event.pageX - bounds.left) / Math.max(1, bounds.width)));
-    const y = Math.max(0, Math.min(1, (event.pageY - bounds.top) / Math.max(1, bounds.height)));
-    event.currentTarget.style.setProperty('--light-x', `${x * 100}%`);
-    event.currentTarget.style.setProperty('--light-y', `${y * 100}%`);
-    event.currentTarget.style.setProperty('--rotate-x', `${(0.5 - y) * 12}deg`);
-    event.currentTarget.style.setProperty('--rotate-y', `${(x - 0.5) * 12}deg`);
-  };
-
-  const resetTilt = () => {
-    pointerBounds.current = null;
-    cardRef.current?.style.removeProperty('--rotate-x');
-    cardRef.current?.style.removeProperty('--rotate-y');
-    cardRef.current?.style.removeProperty('--light-x');
-    cardRef.current?.style.removeProperty('--light-y');
-  };
   const normalizedRating = rating === undefined || !Number.isFinite(rating)
     ? undefined
     : Math.max(0, Math.min(5, Math.round(rating)));
 
   return (
-    <article ref={cardRef} className={styles.card} onPointerEnter={moveLight} onPointerMove={moveLight} onPointerLeave={resetTilt} onPointerCancel={resetTilt}>
+    <article ref={cardRef} className={`liquid-glass ${styles.card}`} {...motion} onPointerEnter={() => accents(true)} onPointerLeave={() => { motion.onPointerLeave(); accents(false); }} onPointerCancel={() => { motion.onPointerCancel(); accents(false); }} onFocus={() => accents(true)} onBlur={() => { motion.onBlur(); accents(false); }}>
       {normalizedRating !== undefined && (
         <div className={styles.starsContainer} aria-label={`Avaliação de ${normalizedRating} de 5 estrelas`} role="img">
           {Array.from({ length: 5 }, (_, index) => (
             <svg
               key={index}
+              data-rating-star={index < normalizedRating ? 'active' : 'inactive'}
               aria-hidden="true"
               className={`${styles.star} ${index < normalizedRating ? styles.starFilled : styles.starEmpty}`}
               viewBox="0 0 20 20"
@@ -101,10 +92,10 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
       {canExpand && (
         <button
           type="button"
-          className={styles.readMore}
+          className={`liquid-glass glass-action ${styles.readMore}`}
           aria-expanded={expanded}
           aria-controls={textId}
-          onClick={() => { resetTilt(); setExpanded((value) => !value); }}
+          onClick={() => { motion.onPointerLeave(); setExpanded((value) => !value); }}
         >
           {expanded ? 'Ler menos' : 'Ler depoimento completo'}
           <span aria-hidden="true" className={styles.toggleIcon}>{expanded ? '−' : '+'}</span>
@@ -113,9 +104,9 @@ export function TestimonialCard({ text, authorName, authorRole, avatarUrl, ratin
 
       <div className={styles.footer}>
         {avatarUrl && avatarUrl !== failedAvatarUrl ? (
-          <img src={avatarUrl} alt={`Foto de perfil de ${authorName}`} onError={() => setFailedAvatarUrl(avatarUrl)} className={styles.avatar} />
+          <img src={avatarUrl} alt={`Foto de perfil de ${authorName}`} onError={() => setFailedAvatarUrl(avatarUrl)} className={styles.avatar} data-avatar />
         ) : (
-          <div className={styles.avatarFallback} role="img" aria-label={authorName.trim() ? `Iniciais de ${authorName.trim().replace(/\s+/g, ' ')}` : 'Autor não informado'}>
+          <div className={styles.avatarFallback} data-avatar role="img" aria-label={authorName.trim() ? `Iniciais de ${authorName.trim().replace(/\s+/g, ' ')}` : 'Autor não informado'}>
             {getInitials(authorName) || '?'}
           </div>
         )}

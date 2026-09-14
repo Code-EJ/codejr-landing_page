@@ -1,10 +1,44 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { TestimonialCard } from './TestimonialCard';
+import gsap from 'gsap';
 
 describe('TestimonialCard', () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
   const baseProps = { text: 'Melhor empresa júnior do Brasil!', authorName: 'Enzo Ribas' };
+
+  it('anima as estrelas em sequência no hover e restaura ao sair', () => {
+    const tween = vi.spyOn(gsap, 'to');
+    render(<TestimonialCard {...baseProps} rating={5} />);
+    const card = screen.getByRole('article');
+    fireEvent.pointerEnter(card);
+    expect(tween).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ stagger: .065, keyframes: expect.any(Array) }));
+    fireEvent.pointerLeave(card);
+    expect(tween).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ y: 0, rotation: 0, scale: 1, overwrite: true }));
+  });
+
+  it('não anima estrelas quando o usuário prefere movimento reduzido', () => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    vi.stubGlobal('matchMedia', vi.fn(query => ({ ...media, media: query, matches: query.includes('reduce') && !query.includes('no-preference') })));
+    render(<TestimonialCard {...baseProps} rating={5} />);
+    const tween = vi.spyOn(gsap, 'to');
+    fireEvent.pointerEnter(screen.getByRole('article'));
+    expect(tween).not.toHaveBeenCalled();
+  });
+
+  it.each([0, 3, 4])('anima apenas as estrelas preenchidas para nota %s', rating => {
+    const tween = vi.spyOn(gsap, 'to');
+    render(<TestimonialCard {...baseProps} rating={rating} />);
+    fireEvent.pointerEnter(screen.getByRole('article'));
+    const starTween = tween.mock.calls.find(([, vars]) => 'keyframes' in vars);
+    if (rating === 0) expect(starTween).toBeUndefined();
+    else {
+      expect(starTween).toBeDefined();
+      const targets = Array.from(starTween![0] as NodeListOf<SVGElement>);
+      expect(targets).toHaveLength(rating);
+      targets.forEach(star => expect(star).toHaveAttribute('data-rating-star', 'active'));
+    }
+  });
 
   it('renderiza todas as informações e os atributos acessíveis', () => {
     render(<TestimonialCard {...baseProps} authorRole="Diretor de Projetos" avatarUrl="https://github.com/github.png" rating={4} />);
@@ -68,7 +102,12 @@ describe('TestimonialCard', () => {
   });
 
   it('permite expandir e recolher um depoimento truncado', () => {
-    vi.spyOn(globalThis, 'getComputedStyle').mockReturnValue({ lineHeight: '24px' } as CSSStyleDeclaration);
+    const computedStyle = globalThis.getComputedStyle;
+    vi.spyOn(globalThis, 'getComputedStyle').mockImplementation(element => {
+      const style = computedStyle(element);
+      style.lineHeight = '24px';
+      return style;
+    });
     vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(240);
     render(<TestimonialCard {...baseProps} />);
     const button = screen.getByRole('button', { name: 'Ler depoimento completo' });
@@ -81,7 +120,12 @@ describe('TestimonialCard', () => {
   });
 
   it('não oferece expansão quando o texto cabe em quatro linhas', () => {
-    vi.spyOn(globalThis, 'getComputedStyle').mockReturnValue({ lineHeight: '24px' } as CSSStyleDeclaration);
+    const computedStyle = globalThis.getComputedStyle;
+    vi.spyOn(globalThis, 'getComputedStyle').mockImplementation(element => {
+      const style = computedStyle(element);
+      style.lineHeight = '24px';
+      return style;
+    });
     vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(48);
     render(<TestimonialCard {...baseProps} />);
     expect(screen.queryByRole('button', { name: /Ler/ })).not.toBeInTheDocument();
