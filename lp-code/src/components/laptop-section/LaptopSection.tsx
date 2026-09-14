@@ -1,129 +1,98 @@
-import React from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+/** Scroll-directed services scene — CODE / oEnzoRibas. */
+import { useRef, type ReactNode } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import styles from './LaptopSection.module.css';
 
-// Registro obrigatório dos plugins
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-/**
- * LaptopSection
- * Componente de teste para animação avançada com ScrollTrigger.
- *
- * Objetivo:
- * - Testar performance com Pin + Scrub
- * - Simular abertura de um laptop em 3D
- * - Validar fluidez de animações sincronizadas com scroll
- *
- * Recursos:
- * - Pin (fixa a seção durante scroll)
- * - Scrub (animação segue o scroll)
- * - Transformações 3D (rotateX + perspective)
- * - Responsividade básica (mobile e desktop)
- *
- * Observações:
- * - Usa useGSAP para garantir cleanup automático
- * - Inclui verificações de null para evitar erros em strict mode
- */
-const LaptopSection: React.FC = () => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const laptopRef = React.useRef<HTMLDivElement>(null);
-  const screenRef = React.useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      
-      // Verificações de segurança - null checks
-      // Se algum ref essencial não estiver pronto, não builda a timeline
-      if (!containerRef.current || !laptopRef.current || !screenRef.current) {
-        return;
-      }
-
-      const mm = gsap.matchMedia();
-
-      mm.add({
-        isDesktop: "(min-width: 1024px)",
-        isMobile: "(max-width: 1023px)"
-      }, (context) => {
-        // Verifica a condição atual
-        const isDesktop = context.conditions?.isDesktop;
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "+=1000",
-            scrub: 1,
-            pin: true,
-            // Adicionado para evitar flashes visuais e jump no pin
-            anticipatePin: 1,
-          },
-        });
-
-        // Ajuste de escala pra Mobile
-        if (!isDesktop) {
-          gsap.set(laptopRef.current, { scale: 0.6 });
-        } else {
-          gsap.set(laptopRef.current, { scale: 1 });
-        }
-
-        tl.to(screenRef.current, {
-          rotateX: 0,
-          ease: "power2.inOut",
-        })
-        .to(".laptop-text", {
-          opacity: 1,
-          y: isDesktop ? -20 : -10,
-          stagger: 0.2,
-          duration: 0.5
-        }, "-=0.5");
+export default function LaptopSection({ children }: { children: ReactNode }) {
+  const root = useRef<HTMLDivElement>(null);
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add({ motion: '(prefers-reduced-motion: no-preference)', mobile: '(max-width: 759px)' }, context => {
+      if (!context.conditions?.motion) return;
+      const scene = root.current;
+      if (!scene) return;
+      const camera = scene.querySelector('[data-camera]');
+      const lid = scene.querySelector('[data-lid]');
+      const hardware = scene.querySelectorAll<HTMLElement>('[data-hardware]');
+      const screen = scene.querySelector<HTMLElement>('[data-display]');
+      if (!camera || !lid || !screen) return;
+      scene.dataset.animated = 'true';
+      const mobile = Boolean(context.conditions.mobile);
+      const aperture = window.innerWidth * .625;
+      const cameraScale = .78 * (mobile ? 1 : Math.min(1, window.innerHeight / (window.innerWidth * .7)));
+      const content = screen.firstElementChild;
+      if (!(content instanceof HTMLElement)) return;
+      // Fit the complete window once; no layout reads during scroll.
+      const previewScale = Math.min(1, aperture / Math.max(1, content.offsetHeight));
+      gsap.set(content, { scale: previewScale, transformOrigin: '50% 0' });
+      gsap.set(scene, { '--display-height': `${aperture}px`, '--deck-depth': `${aperture + 36}px` });
+      const reserveContent = () => { scene.style.minHeight = `${Math.max(window.innerHeight, content.offsetHeight)}px`; };
+      reserveContent();
+      const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(reserveContent);
+      observer?.observe(content);
+      const screenReady = .92;
+      let hasEntered = false;
+      const timeline = gsap.timeline({
+        defaults: { ease: 'none' },
+        onUpdate: () => {
+          const entered = timeline.time() >= screenReady;
+          if (entered === hasEntered) return;
+          hasEntered = entered;
+          hardware.forEach(part => { part.style.visibility = entered ? 'hidden' : 'visible'; });
+          scene.dataset.entered = String(entered);
+        },
+        scrollTrigger: {
+          trigger: scene, start: 'top top',
+          end: () => `+=${window.innerHeight * (window.innerWidth < 760 ? 2 : 2.8)}`,
+          // Lenis already smooths the scroll. A second scrub delay allowed
+          // the pin to release while the camera was still catching up.
+          pin: true, scrub: true, anticipatePin: 1,
+          onToggle: self => gsap.set([camera, lid], { willChange: self.isActive ? 'transform' : 'auto' }),
+        },
       });
+      timeline.fromTo(camera, { z: mobile ? -160 : -850, scale: cameraScale, rotationX: -16, y: window.innerHeight * (mobile ? .24 : .1) },
+        { z: mobile ? -160 : -850, scale: cameraScale, rotationX: -6, y: window.innerHeight * (mobile ? .24 : .1), duration: .35 })
+        .fromTo(lid, { rotationX: -90 }, { rotationX: 0, duration: .35, ease: 'power1.inOut' }, 0)
+        .to(camera, { duration: .15 })
+        .to(camera, { z: 0, scale: 1, y: 0, rotationX: 0, duration: screenReady - .5, ease: 'power2.inOut' });
+      // Keep units identical on both ends, including the first playback.
+      timeline.to(scene, { '--display-height': `${window.innerHeight}px`, duration: screenReady - .5, ease: 'power2.inOut' }, .5)
+        .to(content, { scale: 1, y: 0, duration: screenReady - .5, ease: 'power2.inOut' }, .5)
+        // The completed viewport settles before normal document scroll resumes.
+        .to(camera, { duration: 1 - screenReady }, screenReady);
+      const revealForKeyboard = (event: FocusEvent) => {
+        if (!(event.target instanceof HTMLElement) || !event.target.matches(':focus-visible')) return;
+        if (timeline.scrollTrigger && timeline.progress() < 1) {
+          window.scrollTo({ top: timeline.scrollTrigger.end, behavior: 'instant' });
+          timeline.progress(1);
+        }
+      };
+      screen.addEventListener('focusin', revealForKeyboard);
+      return () => {
+        screen.removeEventListener('focusin', revealForKeyboard);
+        observer?.disconnect();
+        scene.style.removeProperty('min-height');
+        delete scene.dataset.entered;
+        hardware.forEach(part => part.style.removeProperty('visibility'));
+        [camera, lid].forEach(part => { if (part instanceof HTMLElement) part.style.removeProperty('will-change'); });
+        delete scene.dataset.animated;
+      };
+    });
+    return () => mm.revert();
+  }, { scope: root });
 
-      // O useGSAP já lida com o cleanup internamente, 
-      // mas o mm.revert() é bom para limpar as queries de mídia.
-      return () => mm.revert();
-    },
-    { scope: containerRef }
-  );
-
-  return (
-    <div
-      ref={containerRef}
-      className="min-h-screen w-full bg-black flex flex-col items-center justify-center overflow-hidden"
-    >
-      <div className="text-center mb-10 px-4">
-        <h2 className="laptop-text opacity-0 text-3xl md:text-4xl font-bold text-white translate-y-10">
-          Performance de Elite
-        </h2>
-        <p className="laptop-text opacity-0 text-sm md:text-base text-gray-400 translate-y-10">
-          Sente o poder do hardware sob o teu comando.
-        </p>
+  return <div id="services" ref={root} className={styles.scene}>
+    <div className={styles.camera} data-camera>
+      <div className={styles.lid} data-lid>
+        <div className={styles.frame} data-hardware data-shell aria-hidden="true"><i /></div>
+        <div className={styles.back} data-hardware data-shell aria-hidden="true">CODE<span>[]</span></div>
+        <div className={styles.display} data-display>{children}</div>
       </div>
-
-      <div 
-        ref={laptopRef} 
-        className="relative w-[280px] md:w-[300px] h-[180px] md:h-[200px] [perspective:1200px]" 
-      >
-        <div 
-          ref={screenRef} 
-          className="w-full h-full bg-gray-800 border-4 border-gray-700 rounded-t-lg shadow-inner"
-          style={{ 
-            transform: "rotateX(-95deg)", 
-            transformOrigin: "bottom center", 
-            backfaceVisibility: "hidden" 
-          }} 
-        >
-          <div className="flex flex-col items-center justify-center h-full bg-blue-900/20">
-             <div className="text-blue-400 font-mono text-[10px] animate-pulse">
-               {">"} SYSTEM READY
-             </div>
-          </div>
-        </div>
-        
-        <div className="w-[300px] md:w-[320px] h-[10px] bg-gray-700 absolute -bottom-1 -left-[10px] rounded-b-md shadow-xl border-t border-gray-500"></div>
-      </div>
+      <div className={styles.base} data-hardware data-base aria-hidden="true"><div className={styles.hinge} /><div className={styles.keys}>{['esc 1 2 3 4 5 6 7 8 9 0 ⌫', 'tab Q W E R T Y U I O P ⏎', '⇧ A S D F G H J K L ; ⇧', 'ctrl Z X C V B N M , . ↑ fn', 'fn ctrl ⌥ ⌘ space ⌘ ⌥ ← ↓ →'].map((row, index) => <div className={styles.keyRow} key={index}>{row.split(' ').map((key, i) => <i key={i} className={key === 'space' ? styles.spaceKey : undefined}>{key === 'space' ? '' : key}</i>)}</div>)}</div><div className={styles.trackpad} /></div>
     </div>
-  );
-};
-
-export default LaptopSection;
+  </div>;
+}

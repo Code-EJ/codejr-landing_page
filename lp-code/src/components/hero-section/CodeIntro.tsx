@@ -2,7 +2,9 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import styles from './CodeIntro.module.css';
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export function CodeIntro() {
   const root = useRef<HTMLDivElement>(null);
@@ -11,15 +13,24 @@ export function CodeIntro() {
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       if (!root.current || !word.current || window.location.hash) return;
-      const timeline = gsap.timeline();
+      root.current.dataset.animated = 'true';
+      const timeline = gsap.timeline({ scrollTrigger: {
+        trigger: root.current, start: 'top top', end: () => `+=${window.innerHeight * 1.6}`,
+        pin: true, scrub: .3, anticipatePin: 1,
+      } });
       gsap.set(root.current, { visibility: 'visible', opacity: 1 });
       timeline.fromTo(word.current,
+        { z: 1050, y: '30vh', rotationX: -28, rotationY: -16, scale: 1.12, opacity: 0 },
+        { z: 0, y: 0, rotationX: 0, rotationY: 0, scale: 1, opacity: 1, duration: 1.4, ease: 'power1.out' })
+        .to(word.current, { y: '-65vh', rotationX: 75, opacity: 0, duration: .45, ease: 'power2.in' })
+        .fromTo(word.current,
         { y: '-65vh', rotationX: 75, scale: 1.12, opacity: 0, transformOrigin: '50% -180px' },
-        { y: 0, rotationX: 0, scale: 1, opacity: 1, duration: 1.05, ease: 'power3.out' })
+        { y: 0, rotationX: 0, scale: 1, opacity: 1, duration: 1.05, ease: 'power3.out', immediateRender: false })
         .to(word.current, { y: '32vh', scale: .82, opacity: 0, duration: .7, ease: 'power2.inOut' }, '+=.12')
-        .to(root.current, { opacity: 0, duration: .55, onComplete: () => { if (root.current) root.current.style.visibility = 'hidden'; } }, '-=.5');
+        .to(root.current, { autoAlpha: 0, duration: .55 }, '-=.5');
+      return () => { if (root.current) delete root.current.dataset.animated; };
     });
     return () => mm.revert();
   }, { scope: root });
-  return <div ref={root} className={styles.intro} aria-hidden="true"><div ref={word} className={styles.word}>CODE<span>[]</span></div></div>;
+  return <div ref={root} className={styles.intro} aria-hidden="true"><div ref={word} className={styles.word}>CODE<span>[]</span></div><span className={styles.hint}>ROLE PARA ENTRAR ↓</span></div>;
 }

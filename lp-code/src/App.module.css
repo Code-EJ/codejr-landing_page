@@ -1,9 +1,9 @@
 .page {
   overflow: clip;
   background:
-    radial-gradient(ellipse 800px 700px at 85% 8%, #9413f62c, transparent),
+    radial-gradient(ellipse 800px 700px at 85% 8%, #a820f438, transparent),
     radial-gradient(ellipse 800px 600px at 0% 35%, #fd015124, transparent),
-    radial-gradient(ellipse 800px 800px at 95% 68%, #72008e30, transparent),
+    radial-gradient(ellipse 800px 800px at 95% 68%, #8b149e36, transparent),
     var(--page-bg);
 }
 .skipLink {

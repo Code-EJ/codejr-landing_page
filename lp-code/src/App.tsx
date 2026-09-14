@@ -6,6 +6,7 @@ import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import HeroRoot from './components/hero-section/HeroRoot';
 import { CodeIntro } from './components/hero-section/CodeIntro';
+import LaptopSection from './components/laptop-section/LaptopSection';
 import { TestimonialCard } from './components/Testimonial-card/TestimonialCard';
 import { FileExplorer } from './components/ui/file-explorer/FileExplorer';
 import { Footer } from './components/ui/footer/Footer';
@@ -85,9 +86,9 @@ export default function App() {
         <div className={styles.sectionHead} data-reveal><p className={styles.eyebrow}>01 / QUEM SOMOS</p><h2>Tecnologia é o meio.<br /><span>As pessoas são o começo.</span></h2><p>Somos a CODE, uma empresa júnior que conecta aprendizado, colaboração e execução para tirar projetos do papel. Construímos junto com você, não à distância.</p></div>
         <div className={styles.principles}>{[{ title: 'Escutar antes de criar.', description: 'Entendemos o contexto, as pessoas e o que realmente precisa ser resolvido.' }, { title: 'Construir com intenção.', description: 'Unimos design e código em soluções úteis, acessíveis e bem cuidadas.' }, { title: 'Evoluir em parceria.', description: 'Compartilhamos o processo, validamos as decisões e documentamos cada entrega.' }].map((item, index) => <div data-reveal key={item.title}><Card title={item.title} description={item.description} icon={<span className={styles.cardNumber}>0{index + 1} ↗</span>} className={styles.principle} /></div>)}</div>
       </section>
-      <section id="services" className={styles.section}>
-        <div className={styles.splitHead} data-reveal><div><p className={styles.eyebrow}>02 / O QUE CONSTRUÍMOS</p><h2>Abra uma pasta.<br /><span>Descubra um caminho.</span></h2></div><p>Explore nossas especialidades e encontre o ponto de partida para a sua próxima ideia.</p></div><FileExplorer />
-      </section>
+      <LaptopSection><section aria-label="Serviços" className={styles.section}>
+        <div className={styles.splitHead}><div><p className={styles.eyebrow}>02 / O QUE CONSTRUÍMOS</p><h2>Abra uma pasta.<br /><span>Descubra um caminho.</span></h2></div><p>Explore nossas especialidades e encontre o ponto de partida para a sua próxima ideia.</p></div><FileExplorer />
+      </section></LaptopSection>
       <section id="projects" className={styles.section}>
         <div className={styles.splitHead} data-reveal><div><p className={styles.eyebrow}>03 / POSSIBILIDADES EM TELA</p><h2>Uma ideia pode<br /><span>ganhar muitas formas.</span></h2></div><p>Uma seleção de conceitos visuais para mostrar como design e tecnologia se encontram. Projetos reais serão adicionados ao portfólio.</p></div><Carousel items={projects} label="Estudos de interface" />
       </section>
