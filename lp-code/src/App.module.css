@@ -200,6 +200,19 @@
   margin-bottom: 30px;
   letter-spacing: 0.15em;
 }
+.aboutHighlights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+  margin-top: 32px;
+  padding: 28px 0;
+  border-block: 1px solid var(--glass-edge);
+}
+.aboutHighlights strong { font-size: .85rem; font-weight: 500; }
+.aboutHighlights p { margin-top: 12px; max-width: 390px; color: var(--text-muted); font-size: .8rem; line-height: 1.8; }
+.aboutHighlights ul { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; list-style: none; padding: 0; }
+.aboutHighlights li { padding: 10px 14px; border: 1px solid var(--glass-edge); border-radius: 999px; color: var(--text-muted); font-size: .7rem; background: rgb(243 158 215 / .04); }
 .splitHead {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -433,6 +446,8 @@
   .principles {
     grid-template-columns: 1fr;
   }
+  .aboutHighlights { grid-template-columns: 1fr; gap: 22px; }
+  .aboutHighlights ul { justify-content: flex-start; }
   .splitHead {
     grid-template-columns: 1fr;
     gap: 22px;

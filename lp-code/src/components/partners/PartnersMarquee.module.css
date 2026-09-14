@@ -1,0 +1,33 @@
+.root { min-width: 0; margin-bottom: 44px; border-block: 1px solid var(--glass-edge); background: linear-gradient(110deg, transparent, rgb(243 158 215 / .035), transparent); }
+.header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 18px 4px 0; color: var(--text-muted); font-size: .7rem; }
+.header > span { letter-spacing: .08em; }
+.control { min-height: 44px; padding: 8px; color: var(--text-muted); cursor: pointer; font: inherit; border: 0; background: none; border-radius: 8px; }
+.control:hover { color: var(--text-primary); }
+.control:focus-visible, .logo:focus-visible { outline: 2px solid var(--brand-neon); outline-offset: -3px; }
+.viewport { overflow: hidden; padding-block: 16px 24px; mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent); }
+.track { display: flex; width: max-content; min-width: 200%; }
+.group { display: flex; flex-shrink: 0; width: 50%; justify-content: space-around; }
+.logo { display: flex; align-items: center; justify-content: center; flex: 1 0 220px; min-height: 112px; padding: 28px 32px; margin: 4px 8px; text-decoration: none; color: var(--text-primary); border-radius: 8px; }
+.logo img { width: 164px; height: 48px; object-fit: contain; opacity: .92; transition: opacity .25s; }
+.reverse { margin-top: 12px; }
+.logo:hover img, .logo:focus-visible img { opacity: 1; }
+.fallback { max-width: 180px; text-align: center; font-size: 1rem; }
+/* Keyboard users see every unique link in a stationary, wrapping list. */
+.viewport:focus-within { mask-image: none; }
+.viewport:focus-within .track { transform: none !important; width: 100%; min-width: 0; }
+.viewport:focus-within .group { width: 100%; flex-wrap: wrap; }
+.viewport:focus-within .duplicate { display: none; }
+.viewport:focus-within .reverse { display: none; }
+.root[data-static] .track { width: 100%; min-width: 0; }
+.root[data-static] .group { width: 100%; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .logo { flex-basis: 164px; min-height: 88px; padding: 20px 16px; margin: 4px 8px; }
+  .logo img { width: 132px; height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .control, .duplicate, .reverse { display: none; }
+  .viewport { mask-image: none; }
+  .track { transform: none !important; width: 100%; min-width: 0; }
+  .group { width: 100%; flex-wrap: wrap; }
+  .logo img { transition: none; }
+}
