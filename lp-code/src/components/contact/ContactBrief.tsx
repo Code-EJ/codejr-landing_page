@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Button } from '../ui/button/Button';
+import { Button } from '../ui/Button/Button';
 import { contact, sendContactMessage, whatsappUrl } from '../../lib/contact';
-import styles from '../../App.module.css';
+import styles from '../../app/App.module.css';
 import contactStyles from './ContactBrief.module.css';
 
 export function ContactBrief() {
