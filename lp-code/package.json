@@ -2,7 +2,7 @@
   "name": "lp-code",
   "private": true,
   "author": { "name": "oEnzoRibas", "url": "https://github.com/oEnzoRibas" },
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
