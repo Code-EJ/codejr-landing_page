@@ -1,303 +1,561 @@
 .carousel {
   box-sizing: border-box;
+
   width: 100%;
   min-width: 0;
+
   display: flex;
   flex-direction: column;
+
   gap: 28px;
+
   position: relative;
+
   color: var(--text-primary);
+
   container-type: inline-size;
 }
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 16px;
+
   padding: 0 4px;
 }
+
 .eyebrow {
   display: flex;
   align-items: center;
+
   gap: 10px;
+
   color: #b5adb9;
+
   font-size: 0.68rem;
   font-weight: 500;
+
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
 .statusDot {
   width: 5px;
   height: 5px;
+
   border-radius: 50%;
+
   background: #c3a0cc;
 }
+
 .counter {
   white-space: nowrap;
+
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
 }
+
 .counter span {
   color: #827b8c;
 }
+
+/* =========================================================
+   STAGE
+   ========================================================= */
+
 .stage {
   position: relative;
+
   flex: 1 1 auto;
+
   min-height: 240px;
   height: clamp(300px, 46cqw, 460px);
+
   touch-action: pan-y;
+
   perspective: 1400px;
 }
+
+/*
+ * Quando o Carousel contém um Service Showcase,
+ * usamos uma área maior.
+ */
+.carousel:has([data-carousel-showcase]) .stage {
+  height: clamp(420px, 54cqw, 540px);
+  min-height: 300px;
+}
+
+/* =========================================================
+   SLIDE
+   ========================================================= */
+
 .slideShell {
   --light-x: var(--glare-x, 20%);
   --light-y: var(--glare-y, 0%);
-  position: absolute;
-  inset: 0 12%;
-  z-index: 2;
-  border-radius: 24px;
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  perspective: 1200px;
 
+  position: absolute;
+
+  inset: 0 12%;
+
+  z-index: 2;
+
+  border-radius: 24px;
+
+  transform:
+    rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg));
+
+  perspective: 1200px;
 }
 
 .slide {
   position: absolute;
   inset: 0;
+
   overflow: hidden;
+
   border-radius: inherit;
 
   backface-visibility: hidden;
 }
-.exitLayer { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; perspective: 1200px; }
+
+.exitLayer {
+  position: absolute;
+  inset: 0;
+
+  border-radius: inherit;
+
+  pointer-events: none;
+
+  perspective: 1200px;
+}
+
+/* =========================================================
+   IMAGE / VIDEO
+   ========================================================= */
+
 .media {
   width: 100%;
   height: 100%;
+
   display: block;
-  object-fit: contain;
+
+  object-fit: cover;
+
   background: #100e16;
 }
+
+/* =========================================================
+   PREVIEWS
+   ========================================================= */
+
 .previewLeft,
 .previewRight {
   position: absolute;
+
   inset: 9% auto 9% 0;
+
   width: 38%;
+
   padding: 0;
+
   overflow: hidden;
+
   border: 1px solid #ffffff25;
   border-radius: 20px;
+
   background: #17121e;
-  transform: rotateY(18deg) scale(0.97);
+
+  transform:
+    rotateY(18deg)
+    scale(0.97);
+
   opacity: 0.48;
+
   cursor: pointer;
+
   box-shadow: 0 15px 40px #0005;
 }
+
 .previewRight {
   left: auto;
   right: 0;
-  transform: rotateY(-18deg) scale(0.97);
+
+  transform:
+    rotateY(-18deg)
+    scale(0.97);
 }
+
 .previewLeft > div,
 .previewRight > div {
   width: 100%;
   height: 100%;
 }
+
 .previewLeft img,
 .previewRight img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
   filter: saturate(0.55);
 }
-.previewArt {
 
+.previewArt {
   height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 20px;
 
+  gap: 20px;
 }
+
 .previewArt > span {
   font-size: clamp(1rem, 3cqw, 2rem);
   font-weight: 700;
+
   letter-spacing: 0.15em;
 }
+
 .previewMark {
   color: #b69bc5;
 }
+
 .previewArt small {
   color: #b4a7bd;
+
   font-size: 0.65rem;
 }
+
 .stage[data-single] .slideShell {
   inset-inline: 0;
 }
+
+/* =========================================================
+   TEXT CONTENT
+   ========================================================= */
+
 .textContent {
+  box-sizing: border-box;
+
+  width: 100%;
   height: 100%;
+
   overflow: auto;
+
   padding: clamp(28px, 5cqw, 56px);
+
   display: grid;
+
   align-content: safe center;
 
   font-size: clamp(1rem, 3cqw, 1.65rem);
   line-height: 1.55;
-  overflow-wrap: anywhere;
 
+  overflow-wrap: anywhere;
 }
+
+/*
+ * SERVICE CARD SHOWCASE
+ *
+ * O conteúdo do showcase NÃO pode criar scroll.
+ * Ele ocupa exatamente o tamanho do slide.
+ */
+.textContent:has(> [data-carousel-showcase]) {
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  padding: 0;
+
+  display: block;
+
+  overflow: hidden;
+}
+
+.textContent:has(> [data-carousel-showcase])
+  > [data-carousel-showcase] {
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   CAPTION
+   ========================================================= */
+
 .caption {
   position: absolute;
+
   bottom: 20px;
   left: 20px;
+
   width: fit-content;
   max-width: calc(100% - 40px);
+
   padding: 10px 16px;
 
   border-radius: 30px;
 
-
-
   font-size: 0.75rem;
-  pointer-events: none;
 
+  pointer-events: none;
 }
+
+/* =========================================================
+   CONTROLS
+   ========================================================= */
+
 .controls {
   display: flex;
   align-items: center;
   justify-content: center;
+
   gap: 12px;
 }
+
 .glassButton,
 .playButton {
   flex: 0 0 auto;
+
   display: inline-flex;
   justify-content: center;
   align-items: center;
+
   min-width: 46px;
   min-height: 46px;
+
   padding: 10px;
+
   border: 1px solid #ffffff24;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ffffff16, #ffffff03);
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff16,
+      #ffffff03
+    );
+
   color: #eee8f1;
+
   box-shadow:
     inset 0 1px 0 #ffffff24,
     0 5px 12px #0002;
+
   backdrop-filter: blur(14px);
+
   font: inherit;
   font-size: 1.2rem;
+
   cursor: pointer;
 }
+
 .playButton {
-  font-size: 1rem;
   margin-left: 8px;
+
+  font-size: 1rem;
 }
+
+/* =========================================================
+   DOTS
+   ========================================================= */
+
 .dots {
   display: flex;
   align-items: center;
+
   overflow-x: auto;
+  overflow-y: hidden;
+
   min-width: 0;
   max-width: 60%;
+
   padding: 0 8px;
+
   border: 1px solid #ffffff14;
-  background: #ffffff04;
   border-radius: 30px;
+
+  background: #ffffff04;
 }
+
 .dot {
   display: grid;
   place-items: center;
+
   flex: 0 0 28px;
+
   height: 44px;
+
   border: 0;
+
   padding: 0;
+
   background: transparent;
+
   cursor: pointer;
+
   border-radius: 12px;
 }
+
 .dot span {
   width: 5px;
   height: 5px;
+
   border-radius: 8px;
+
   background: #827b8b;
 }
+
 .dot[aria-current="true"] {
   flex-basis: 36px;
 }
+
 .dot[aria-current="true"] span {
   width: 22px;
+
   background: #e0cde8;
 }
+
+/* =========================================================
+   FALLBACK
+   ========================================================= */
+
 .fallback {
   display: flex;
+
   height: 100%;
   min-height: 220px;
+
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   gap: 16px;
+
   padding: 24px;
+
   text-align: center;
+
   color: #dfd3ee;
 }
+
 .fallback > span {
   font-size: 3rem;
+
   color: #c4a5f3;
 }
+
 .fallback button {
   font-size: 0.875rem;
+
   border-radius: 24px;
+
   padding-inline: 20px;
 }
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
 .srOnly {
   position: absolute;
+
   width: 1px;
   height: 1px;
+
   padding: 0;
   margin: -1px;
+
   overflow: hidden;
+
   clip-path: inset(50%);
+
   white-space: nowrap;
 }
+
 .carousel:focus-visible,
 .glassButton:focus-visible,
 .playButton:focus-visible,
 .dot:focus-visible {
   outline: 2px solid #e7c6ff;
+
   outline-offset: 4px;
 }
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
 @media (hover: hover) and (pointer: fine) {
   .glassButton:hover,
   .playButton:hover {
     border-color: var(--glass-highlight);
   }
+
   .previewLeft:hover,
   .previewRight:hover {
     opacity: 0.8;
   }
+
   .dot:hover span {
     background: white;
   }
 }
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
 @container (max-width: 600px) {
   .stage {
     height: 340px;
   }
+
+  /*
+   * Showcase continua maior que Carousel comum.
+   */
+  .carousel:has([data-carousel-showcase]) .stage {
+    height: 320px;
+    min-height: 320px;
+  }
+
   .slideShell {
     inset-inline: 0;
+
     border-radius: 20px;
   }
+
   .previewLeft,
   .previewRight {
     display: none;
   }
+
   .caption {
     bottom: 14px;
     left: 14px;
   }
+
   .controls {
     gap: 8px;
   }
 }
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
   .slide,
   .slideShell,
@@ -308,6 +566,7 @@
   .previewRight {
     animation: none;
     transition: none;
+
     transform: none !important;
   }
 }

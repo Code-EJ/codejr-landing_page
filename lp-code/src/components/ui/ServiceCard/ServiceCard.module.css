@@ -1,86 +1,123 @@
-.dialog {
-  width: min(560px, calc(100% - 32px));
-  max-height: calc(100dvh - 40px);
+.overlay {
+  position: fixed;
+  inset: 0;
 
-  padding: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  padding: clamp(12px, 2vw, 28px);
+
+  background: rgb(4 2 12 / 0.74);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.dialog {
+  position: relative;
+
+  width: min(760px, 94vw);
+  max-height: calc(100dvh - 32px);
+
   margin: auto;
 
-  --glass-opacity: 0.8;
+  --glass-opacity: 0.86;
+  --glass-radius: 30px;
 
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+
   overscroll-behavior: contain;
 
   border: 1px solid var(--glass-edge);
-  border-radius: 24px;
+  border-radius: 30px;
 
   color: var(--text-primary);
 
-  scrollbar-width: thin;
+  box-shadow:
+    0 40px 120px rgb(0 0 0 / 0.45),
+    0 0 80px rgb(148 19 246 / 0.08);
 }
 
-.dialog::backdrop {
-  background: rgb(3 7 18 / 0.6);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+.dialogWithShowcase {
+  width: min(1280px, 94vw);
+  height: min(700px, 94vh);
 }
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 .dialogHeader {
   position: sticky;
   top: 0;
-  z-index: 2;
+
+  z-index: 20;
+
+  min-height: 70px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  gap: 16px;
+  gap: 20px;
 
-  padding: 18px 24px;
+  padding: 13px 18px 13px 28px;
 
   border-bottom: 1px solid var(--glass-edge);
 
-  background: rgb(22 11 27 / 0.82);
+  background: rgb(19 9 24 / 0.92);
 
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
   color: var(--text-muted);
 
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.64rem;
+  font-weight: 500;
+
+  letter-spacing: 0.16em;
 }
 
 .dialogHeader button {
+  width: 44px;
+  height: 44px;
+
   display: grid;
   place-items: center;
 
-  min-width: 44px;
-  min-height: 44px;
+  flex-shrink: 0;
 
-  padding: 4px;
+  padding: 0;
 
-  border: 0;
-  border-radius: 10px;
-
-  background: transparent;
+  border-radius: 13px;
 
   color: var(--text-primary);
 
-  font: inherit;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
+  line-height: 1;
 
   cursor: pointer;
 
   transition:
-    background-color 180ms ease,
+    transform 180ms ease,
     color 180ms ease,
-    transform 180ms ease;
+    background 180ms ease;
 }
 
 .dialogHeader button:hover {
-  background: rgb(255 255 255 / 0.06);
   color: var(--accent);
+
+  transform: rotate(4deg);
 }
 
 .dialogHeader button:active {
@@ -89,66 +126,115 @@
 
 .dialogHeader button:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.dialogBody {
+  min-width: 0;
+}
+
+.dialogBodyWithShowcase {
+  display: grid;
+
+  grid-template-columns:
+    minmax(310px, 0.72fr)
+    minmax(0, 1.5fr);
+
+  align-items: start;
+
+  min-width: 0;
+
+  overflow: visible;
+}
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
 .dialogContent {
-  padding: clamp(24px, 5vw, 40px);
+  position: relative;
+
+  min-width: 0;
+
+  padding: clamp(34px, 3.5vw, 56px);
+}
+
+.dialogBodyWithShowcase .dialogContent {
+  border-right: 1px solid var(--glass-edge);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgb(255 255 255 / 0.025),
+      transparent 65%
+    );
 }
 
 .dialogEyebrow {
-  margin: 0;
+  margin: 0 0 14px;
 
   color: var(--accent);
 
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.62rem;
+  font-weight: 650;
+
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .dialogContent h3 {
-  margin: 12px 0 20px;
+  max-width: 11ch;
 
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
+  margin: 0 0 24px;
 
   color: var(--text-primary);
+
+  font-size: clamp(2.5rem, 4vw, 4.3rem);
+  font-weight: 520;
+
+  line-height: 0.94;
+  letter-spacing: -0.06em;
 }
 
 .dialogContent > p:not(.dialogEyebrow) {
+  max-width: 46ch;
+
   margin: 0;
 
   color: var(--text-muted);
 
   font-size: 0.95rem;
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
 .dialogContent h4 {
-  margin: 28px 0 0;
+  margin: 34px 0 0;
 
   color: var(--text-primary);
 
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.68rem;
+  font-weight: 650;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .dialogContent ul {
   list-style: none;
 
   padding: 0;
-  margin: 16px 0 30px;
+  margin: 18px 0 34px;
 }
 
 .dialogContent li {
   display: flex;
   align-items: flex-start;
 
-  gap: 10px;
+  gap: 11px;
 
   padding: 12px 0;
 
@@ -156,7 +242,7 @@
 
   color: var(--text-muted);
 
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   line-height: 1.5;
 }
 
@@ -167,45 +253,338 @@
 .dialogContent li span {
   flex-shrink: 0;
 
-  margin-right: 2px;
-
   color: var(--accent);
+
+  font-size: 0.76rem;
 }
 
-@media (max-width: 640px) {
-  .dialog {
-    width: calc(100% - 24px);
-    max-height: calc(100dvh - 24px);
+/* =========================================================
+   SHOWCASE / CAROUSEL
+   ========================================================= */
 
-    border-radius: 20px;
+.dialogMedia {
+  position: relative;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 32px 24px 24px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 75% 25%,
+      rgb(148 19 246 / 0.14),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgb(253 1 81 / 0.08),
+      transparent 45%
+    ),
+    rgb(10 6 16 / 0.16);
+}
+
+/*
+ * IMPORTANTE:
+ *
+ * É aqui que diminuímos o Carousel SOMENTE
+ * dentro do ServiceCard.
+ *
+ * O componente Carousel original continua
+ * com tamanho normal em outras partes do site.
+ */
+.dialogMedia > * {
+  width: min(100%, 680px);
+
+  min-width: 0;
+
+  margin-inline: auto;
+}
+
+/* =========================================================
+   SHOWCASE ITEM
+   ========================================================= */
+
+.showcaseItem {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  min-width: 0;
+  min-height: 0;
+
+  overflow: hidden;
+
+  border: 1px solid var(--glass-edge);
+  border-radius: 22px;
+
+  background: rgb(10 6 16 / 0.5);
+
+  box-shadow:
+    0 20px 50px rgb(0 0 0 / 0.25);
+
+  contain: paint;
+}
+
+/*
+ * A imagem sempre preenche o slide.
+ *
+ * Se não couber:
+ * crop.
+ *
+ * Nunca:
+ * scroll.
+ */
+.showcaseImage {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+  max-height: none;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.showcaseItem:hover .showcaseImage {
+  transform: scale(1.025);
+}
+
+.showcaseItem::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to top,
+      rgb(7 3 12 / 0.95) 0%,
+      rgb(7 3 12 / 0.62) 25%,
+      rgb(7 3 12 / 0.18) 48%,
+      transparent 68%
+    );
+}
+
+/* =========================================================
+   SHOWCASE COPY
+   ========================================================= */
+
+.showcaseCopy {
+  position: absolute;
+
+  z-index: 2;
+
+  left: clamp(18px, 2.5vw, 30px);
+  right: clamp(18px, 2.5vw, 30px);
+  bottom: clamp(18px, 2.5vw, 28px);
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+.showcaseCopy > span {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: var(--accent);
+
+  font-size: 0.54rem;
+  font-weight: 650;
+
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.showcaseCopy h4 {
+  margin: 0;
+
+  color: #fff;
+
+  font-size: clamp(1.3rem, 1.8vw, 2rem);
+  font-weight: 520;
+
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+.showcaseCopy p {
+  display: -webkit-box;
+
+  max-width: 48ch;
+
+  margin: 8px 0 0;
+
+  overflow: hidden;
+
+  color: rgb(255 255 255 / 0.74);
+
+  font-size: 0.78rem;
+  line-height: 1.5;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  line-clamp: 2;
+}
+
+.showcaseNotice {
+  width: min(100%, 680px);
+
+  margin: 10px auto 0;
+
+  color: var(--text-muted);
+
+  font-size: 0.56rem;
+  line-height: 1.5;
+
+  opacity: 0.65;
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .dialogWithShowcase {
+    width: min(850px, 94vw);
   }
 
-  .dialogHeader {
-    padding: 14px 18px;
+  .dialogBodyWithShowcase {
+    grid-template-columns: 1fr;
   }
 
-  .dialogContent {
-    padding: 24px 20px;
+  .dialogBodyWithShowcase .dialogContent {
+    border-right: 0;
+    border-bottom: 1px solid var(--glass-edge);
   }
 
   .dialogContent h3 {
-    font-size: clamp(1.8rem, 9vw, 2.5rem);
+    max-width: 16ch;
+  }
+
+  .dialogMedia {
+    padding: 26px 20px 20px;
+  }
+
+  .dialogMedia > * {
+    width: min(100%, 640px);
+  }
+
+  .showcaseNotice {
+    width: min(100%, 640px);
   }
 }
 
-@media (max-width: 360px) {
-  .dialog {
-    width: calc(100% - 16px);
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .overlay {
+    padding: 8px;
+  }
+
+  .dialog,
+  .dialogWithShowcase {
+    width: 100%;
+
     max-height: calc(100dvh - 16px);
+
+    border-radius: 22px;
+  }
+
+  .dialogHeader {
+    min-height: 60px;
+
+    padding: 9px 12px 9px 18px;
+
+    font-size: 0.56rem;
   }
 
   .dialogContent {
-    padding: 22px 16px;
+    padding: 28px 22px 32px;
+  }
+
+  .dialogContent h3 {
+    max-width: none;
+
+    font-size: clamp(2.3rem, 12vw, 3.4rem);
+  }
+
+  .dialogContent > p:not(.dialogEyebrow) {
+    font-size: 0.9rem;
+  }
+
+  .dialogMedia {
+    padding: 20px 14px 16px;
+  }
+
+  .dialogMedia > * {
+    width: min(100%, 520px);
+  }
+
+  .showcaseNotice {
+    width: min(100%, 520px);
+  }
+
+  .showcaseItem {
+    border-radius: 18px;
+  }
+
+  .showcaseCopy {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .showcaseCopy h4 {
+    font-size: 1.4rem;
   }
 }
 
+/* =========================================================
+   VERY SMALL
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .dialogContent {
+    padding-inline: 18px;
+  }
+
+  .dialogMedia {
+    padding-inline: 12px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  .dialogHeader button {
+  .dialogHeader button,
+  .showcaseImage {
     transition: none;
   }
 }

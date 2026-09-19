@@ -4,6 +4,14 @@ export type ServiceCategory =
   | "Infraestrutura"
   | "Dados";
 
+export type ServiceShowcaseItem = {
+  id: string;
+  title: string;
+  description?: string;
+  image: string;
+  alt: string;
+};
+
 export interface Service {
   id: string;
   title: string;
@@ -11,4 +19,5 @@ export interface Service {
   summary: string;
   description: string;
   deliverables: string[];
+  showcase?: ServiceShowcaseItem[];
 }

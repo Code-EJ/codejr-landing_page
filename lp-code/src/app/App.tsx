@@ -7,6 +7,7 @@ import "lenis/dist/lenis.css";
 import { CodeIntro } from "../sections/hero/components/CodeIntro/CodeIntro";
 import { Footer } from "../components/layout/Footer/Footer";
 import { Navbar } from "../components/layout/Navbar/NavBar";
+import { ScrollJourney } from "../components/visual/ScrollJourney/ScrollJourney";
 
 import styles from "./App.module.css";
 import {
@@ -75,6 +76,8 @@ export default function App() {
         Pular para o conteúdo
       </a>
       <Navbar />
+
+      <ScrollJourney />
       <main id="main-content">
         <HeroSection />
         <DisciplinesBar />

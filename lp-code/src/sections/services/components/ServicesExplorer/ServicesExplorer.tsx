@@ -18,9 +18,14 @@ import type {
 
 import styles from "./ServicesExplorer.module.css";
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(
+  useGSAP,
+  ScrollTrigger,
+);
 
-type ServiceFilter = "Todos" | ServiceCategory;
+type ServiceFilter =
+  | "Todos"
+  | ServiceCategory;
 
 const indexedServices = services.map(
   (service, index) => ({
@@ -36,20 +41,24 @@ export function ServicesExplorer() {
   const [activeId, setActiveId] =
     useState<string | null>(null);
 
-  const root = useRef<HTMLDivElement>(null);
+  const root =
+    useRef<HTMLDivElement>(null);
 
   const lastTrigger =
     useRef<HTMLElement | null>(null);
 
-  const filtered = indexedServices.filter(
-    (service) =>
-      category === "Todos" ||
-      service.category === category,
-  );
+  const filtered =
+    indexedServices.filter(
+      (service) =>
+        category === "Todos" ||
+        service.category === category,
+    );
 
-  const active = services.find(
-    (service) => service.id === activeId,
-  );
+  const active =
+    indexedServices.find(
+      (service) =>
+        service.id === activeId,
+    );
 
   useGSAP(
     () => {
@@ -67,10 +76,14 @@ export function ServicesExplorer() {
             {
               y: 0,
               opacity: 1,
+
               duration: 0.5,
               stagger: 0.055,
+
               ease: "power3.out",
-              clearProps: "transform,opacity",
+
+              clearProps:
+                "transform,opacity",
 
               scrollTrigger: {
                 trigger: root.current,
@@ -91,6 +104,31 @@ export function ServicesExplorer() {
     },
   );
 
+  const openService = (
+    serviceId: string,
+  ) => {
+    lastTrigger.current =
+      document.activeElement instanceof
+      HTMLElement
+        ? document.activeElement
+        : null;
+
+    setActiveId(serviceId);
+  };
+
+  const closeService = () => {
+    const trigger =
+      lastTrigger.current;
+
+    setActiveId(null);
+
+    requestAnimationFrame(() => {
+      trigger?.focus({
+        preventScroll: true,
+      });
+    });
+  };
+
   return (
     <div
       ref={root}
@@ -106,9 +144,15 @@ export function ServicesExplorer() {
           <i />
         </span>
 
-        <span>CODE / serviços</span>
+        <span>
+          CODE / serviços
+        </span>
 
-        <span className={styles.toolbarMeta}>
+        <span
+          className={
+            styles.toolbarMeta
+          }
+        >
           Explore as possibilidades
         </span>
       </div>
@@ -118,31 +162,54 @@ export function ServicesExplorer() {
           className={styles.sidebar}
           aria-label="Filtrar serviços"
         >
-          <p>ESPECIALIDADES</p>
+          <p>
+            ESPECIALIDADES
+          </p>
 
-          {serviceCategories.map((item) => (
-            <button
-              type="button"
-              key={item}
-              aria-pressed={category === item}
-              onClick={() => setCategory(item)}
-            >
-              {item}
+          {serviceCategories.map(
+            (item) => {
+              const amount =
+                item === "Todos"
+                  ? services.length
+                  : services.filter(
+                      (service) =>
+                        service.category ===
+                        item,
+                    ).length;
 
-              <span aria-hidden="true">
-                {item === "Todos"
-                  ? String(services.length).padStart(2, "0")
-                  : String(
-                      services.filter(
-                        (service) =>
-                          service.category === item,
-                      ).length,
-                    ).padStart(2, "0")}
-              </span>
-            </button>
-          ))}
+              return (
+                <button
+                  type="button"
+                  key={item}
+                  aria-pressed={
+                    category === item
+                  }
+                  onClick={() =>
+                    setCategory(item)
+                  }
+                >
+                  {item}
 
-          <div className={styles.sidebarNote}>
+                  <span
+                    aria-hidden="true"
+                  >
+                    {String(
+                      amount,
+                    ).padStart(
+                      2,
+                      "0",
+                    )}
+                  </span>
+                </button>
+              );
+            },
+          )}
+
+          <div
+            className={
+              styles.sidebarNote
+            }
+          >
             Do primeiro esboço
             <br />
             à próxima entrega.
@@ -153,67 +220,97 @@ export function ServicesExplorer() {
           </div>
         </aside>
 
-        <div className={styles.browser}>
-          <div className={styles.breadcrumb}>
+        <div
+          className={styles.browser}
+        >
+          <div
+            className={
+              styles.breadcrumb
+            }
+          >
             <span>
               Serviços
-              <span aria-hidden="true"> / </span>
-              <strong>{category}</strong>
+
+              <span
+                aria-hidden="true"
+              >
+                {" "}/{" "}
+              </span>
+
+              <strong>
+                {category}
+              </strong>
             </span>
 
             <span role="status">
-              {filtered.length} serviços
+              {filtered.length}{" "}
+              {filtered.length === 1
+                ? "serviço"
+                : "serviços"}
             </span>
           </div>
 
           <div className={styles.grid}>
-            {filtered.map((service) => (
-              <div
-                key={service.id}
-                data-folder-entry
-              >
-                <Folder
-                  title={service.title}
-                  description={service.summary}
-                  index={service.index}
-                  onClick={() => {
-                    lastTrigger.current =
-                      document.activeElement as HTMLElement;
-
-                    setActiveId(service.id);
-                  }}
-                />
-              </div>
-            ))}
+            {filtered.map(
+              (service) => (
+                <div
+                  key={service.id}
+                  data-folder-entry
+                >
+                  <Folder
+                    title={
+                      service.title
+                    }
+                    description={
+                      service.summary
+                    }
+                    index={
+                      service.index
+                    }
+                    onClick={() =>
+                      openService(
+                        service.id,
+                      )
+                    }
+                  />
+                </div>
+              ),
+            )}
           </div>
         </div>
       </div>
 
-      <div className={styles.statusBar}>
+      <div
+        className={styles.statusBar}
+      >
         <span>
           <i />
-          Design e tecnologia, conectados.
+
+          Design e tecnologia,
+          conectados.
         </span>
 
         <span>
-          Selecione uma pasta para explorar ↗
+          Selecione uma pasta para
+          explorar ↗
         </span>
       </div>
 
       {active && (
         <ServiceCard
           title={active.title}
-          description={active.description}
-          deliverables={active.deliverables}
-          onClose={() => {
-            setActiveId(null);
-
-            requestAnimationFrame(() => {
-              lastTrigger.current?.focus({
-                preventScroll: true,
-              });
-            });
-          }}
+          description={
+            active.description
+          }
+          deliverables={
+            active.deliverables
+          }
+          showcase={
+            active.showcase
+          }
+          onClose={
+            closeService
+          }
         />
       )}
     </div>

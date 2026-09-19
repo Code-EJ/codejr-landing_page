@@ -1,0 +1,576 @@
+.journey {
+  position: fixed;
+
+  z-index: 800;
+
+  top: 50%;
+  right: clamp(18px, 2.2vw, 38px);
+
+  width: 72px;
+  height: min(62vh, 620px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 18px;
+
+  transform: translateY(-50%);
+
+  color: var(--text-primary);
+
+  user-select: none;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.progressHeader {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 4px;
+
+  pointer-events: none;
+}
+
+.progressLabel {
+  color: var(--text-muted);
+
+  font-size: 0.48rem;
+  font-weight: 600;
+
+  letter-spacing: 0.22em;
+}
+
+.progressValue {
+  color: var(--text-primary);
+
+  font-size: 0.7rem;
+  font-weight: 650;
+
+  font-variant-numeric: tabular-nums;
+
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   TRACK
+   ========================================================= */
+
+.track {
+  position: relative;
+
+  width: 100%;
+  flex: 1;
+
+  min-height: 280px;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+}
+
+.trackBase,
+.trackFill,
+.trackGlow {
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+
+  left: 50%;
+
+  width: 2px;
+
+  transform: translateX(-50%);
+
+  border-radius: 999px;
+}
+
+.trackBase {
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.05),
+      rgb(255 255 255 / 0.22),
+      rgb(255 255 255 / 0.05)
+    );
+}
+
+.trackFill {
+  background:
+    linear-gradient(
+      to bottom,
+      #fd0151 0%,
+      #bf0cbb 48%,
+      #9413f6 100%
+    );
+
+  box-shadow:
+    0 0 10px
+      rgb(253 1 81 / 0.45),
+    0 0 22px
+      rgb(148 19 246 / 0.28);
+
+  transform:
+    translateX(-50%)
+    scaleY(0);
+
+  transform-origin: top center;
+}
+
+.trackGlow {
+  width: 12px;
+
+  opacity: 0.12;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      #fd0151,
+      #9413f6,
+      transparent
+    );
+
+  filter: blur(10px);
+}
+
+/* =========================================================
+   MARKERS
+   ========================================================= */
+
+.marker {
+  position: absolute;
+
+  left: 50%;
+
+  z-index: 4;
+
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  transform:
+    translate(-50%, -50%);
+
+  cursor: pointer;
+
+  pointer-events: auto;
+}
+
+.markerDot {
+  position: relative;
+
+  width: 7px;
+  height: 7px;
+
+  border: 1px solid
+    rgb(255 255 255 / 0.24);
+
+  border-radius: 50%;
+
+  background: #17121e;
+
+  transition:
+    width 220ms ease,
+    height 220ms ease,
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.marker[data-passed="true"]
+  .markerDot {
+  border-color:
+    rgb(224 205 232 / 0.75);
+
+  background: #cdb7dc;
+}
+
+.marker[data-active="true"]
+  .markerDot {
+  width: 10px;
+  height: 10px;
+
+  background: #fff;
+
+  border-color: #fff;
+
+  box-shadow:
+    0 0 0 4px
+      rgb(148 19 246 / 0.12),
+    0 0 12px
+      rgb(253 1 81 / 0.65),
+    0 0 22px
+      rgb(148 19 246 / 0.4);
+
+  transform: scale(1.05);
+}
+
+.markerTooltip {
+  position: absolute;
+
+  top: 50%;
+  right: calc(100% + 7px);
+
+  padding: 7px 10px;
+
+  border: 1px solid
+    rgb(255 255 255 / 0.11);
+
+  border-radius: 9px;
+
+  background:
+    rgb(15 9 20 / 0.88);
+
+  color: #ddd5e2;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter:
+    blur(14px);
+
+  box-shadow:
+    0 8px 30px
+      rgb(0 0 0 / 0.25);
+
+  font-size: 0.56rem;
+  font-weight: 550;
+
+  letter-spacing: 0.08em;
+
+  white-space: nowrap;
+
+  opacity: 0;
+
+  transform:
+    translateY(-50%)
+    translateX(6px);
+
+  pointer-events: none;
+
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.marker:hover
+  .markerTooltip,
+.marker:focus-visible
+  .markerTooltip {
+  opacity: 1;
+
+  transform:
+    translateY(-50%)
+    translateX(0);
+}
+
+.marker:focus-visible {
+  outline: none;
+}
+
+.marker:focus-visible
+  .markerDot {
+  outline: 2px solid
+    #e7c6ff;
+
+  outline-offset: 5px;
+}
+
+/* =========================================================
+   ROCKET
+   ========================================================= */
+
+.rocket {
+  position: absolute;
+
+  z-index: 10;
+
+  top: 0;
+  left: 50%;
+
+  width: 44px;
+  height: 72px;
+
+  margin-top: -36px;
+  margin-left: -22px;
+
+  display: grid;
+  place-items: center;
+
+  pointer-events: none;
+
+  will-change: transform;
+}
+
+.rocketBody {
+  position: relative;
+
+  z-index: 2;
+
+  width: 30px;
+
+  will-change: transform;
+}
+
+.rocketSvg {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  overflow: visible;
+
+  filter:
+    drop-shadow(
+      0 5px 8px
+        rgb(0 0 0 / 0.35)
+    );
+}
+
+.flame {
+  transform-origin:
+    50% 53px;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+.rocketGlow {
+  position: absolute;
+
+  z-index: 1;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgb(253 1 81 / 0.55),
+      rgb(148 19 246 / 0.16)
+        46%,
+      transparent 72%
+    );
+
+  filter: blur(9px);
+
+  opacity: 0.28;
+
+  pointer-events: none;
+
+  will-change:
+    transform,
+    opacity;
+}
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brandMark {
+  color: var(--text-muted);
+
+  font-size: 0.46rem;
+  font-weight: 650;
+
+  letter-spacing: 0.12em;
+
+  opacity: 0.55;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   DESKTOP HOVER
+   ========================================================= */
+
+@media (
+  hover: hover
+) and (
+  pointer: fine
+) {
+  .track:hover
+    .trackBase {
+    background:
+      linear-gradient(
+        to bottom,
+        rgb(
+          255
+          255
+          255 /
+          0.08
+        ),
+        rgb(
+          255
+          255
+          255 /
+          0.32
+        ),
+        rgb(
+          255
+          255
+          255 /
+          0.08
+        )
+      );
+  }
+
+  .marker:hover
+    .markerDot {
+    transform: scale(1.3);
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .journey {
+    right: 14px;
+
+    width: 58px;
+
+    height: min(
+      54vh,
+      520px
+    );
+  }
+
+  .rocket {
+    width: 38px;
+    height: 62px;
+
+    margin-top: -31px;
+    margin-left: -19px;
+  }
+
+  .rocketBody {
+    width: 26px;
+  }
+
+  .markerTooltip {
+    display: none;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 680px) {
+  .journey {
+    right: 5px;
+
+    width: 36px;
+
+    height: min(
+      38vh,
+      320px
+    );
+
+    gap: 10px;
+
+    opacity: 0.85;
+  }
+
+  .progressHeader {
+    gap: 2px;
+  }
+
+  .progressLabel,
+  .brandMark {
+    display: none;
+  }
+
+  .progressValue {
+    font-size: 0.55rem;
+  }
+
+  .track {
+    min-height: 180px;
+  }
+
+  .trackBase,
+  .trackFill {
+    width: 1.5px;
+  }
+
+  .trackGlow {
+    width: 8px;
+  }
+
+  .marker {
+    width: 24px;
+    height: 24px;
+  }
+
+  .markerDot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .marker[data-active="true"]
+    .markerDot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .rocket {
+    width: 28px;
+    height: 46px;
+
+    margin-top: -23px;
+    margin-left: -14px;
+  }
+
+  .rocketBody {
+    width: 21px;
+  }
+
+  .rocketGlow {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (
+  prefers-reduced-motion:
+    reduce
+) {
+  .markerDot,
+  .markerTooltip {
+    transition: none;
+  }
+
+  .rocket,
+  .rocketBody,
+  .rocketGlow,
+  .flame {
+    animation: none;
+  }
+}
