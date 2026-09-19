@@ -1,7 +1,7 @@
 /** CODE contact channels — maintained by oEnzoRibas. */
 export const contact = {
-  email: 'enzo.ribas@juniorcode.com.br',
-  whatsapp: '5531975424678',
+  email: 'contato@juniorcode.com.br',
+  whatsapp: '5531973100592',
 };
 
 export const whatsappUrl = `https://wa.me/${contact.whatsapp}?text=${encodeURIComponent('Olá, CODE! Gostaria de conversar sobre um projeto.')}`;

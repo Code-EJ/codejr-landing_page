@@ -2,8 +2,8 @@
 
 ## Canais provisórios
 
-- E-mail: enzo.ribas@juniorcode.com.br
-- WhatsApp: +55 31 97542-4678
+- E-mail: contato@juniorcode.com.br
+- WhatsApp: +55 31 973100592
 - Configuração dos canais: `src/lib/contact.ts`.
 
 ## Ativar o envio sem backend próprio
