@@ -1,5 +1,4 @@
-
-import { FileExplorer } from "../../components/ui";
+import { ServicesExplorer } from "./components/ServicesExplorer/ServicesExplorer";
 import LaptopSection from "../../components/visual/Laptop/Laptop";
 import styles from "../../app/App.module.css";
 
@@ -21,7 +20,7 @@ return (
                 a sua próxima ideia.
             </p>
             </div>
-            <FileExplorer />
+            <ServicesExplorer />
         </section>
     </LaptopSection>
 )

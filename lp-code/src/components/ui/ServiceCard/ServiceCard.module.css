@@ -1,0 +1,211 @@
+.dialog {
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100dvh - 40px);
+
+  padding: 0;
+  margin: auto;
+
+  --glass-opacity: 0.8;
+
+  overflow: auto;
+  overscroll-behavior: contain;
+
+  border: 1px solid var(--glass-edge);
+  border-radius: 24px;
+
+  color: var(--text-primary);
+
+  scrollbar-width: thin;
+}
+
+.dialog::backdrop {
+  background: rgb(3 7 18 / 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.dialogHeader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 18px 24px;
+
+  border-bottom: 1px solid var(--glass-edge);
+
+  background: rgb(22 11 27 / 0.82);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  color: var(--text-muted);
+
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dialogHeader button {
+  display: grid;
+  place-items: center;
+
+  min-width: 44px;
+  min-height: 44px;
+
+  padding: 4px;
+
+  border: 0;
+  border-radius: 10px;
+
+  background: transparent;
+
+  color: var(--text-primary);
+
+  font: inherit;
+  font-size: 1.5rem;
+
+  cursor: pointer;
+
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.dialogHeader button:hover {
+  background: rgb(255 255 255 / 0.06);
+  color: var(--accent);
+}
+
+.dialogHeader button:active {
+  transform: scale(0.94);
+}
+
+.dialogHeader button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.dialogContent {
+  padding: clamp(24px, 5vw, 40px);
+}
+
+.dialogEyebrow {
+  margin: 0;
+
+  color: var(--accent);
+
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.dialogContent h3 {
+  margin: 12px 0 20px;
+
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+
+  color: var(--text-primary);
+}
+
+.dialogContent > p:not(.dialogEyebrow) {
+  margin: 0;
+
+  color: var(--text-muted);
+
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.dialogContent h4 {
+  margin: 28px 0 0;
+
+  color: var(--text-primary);
+
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.dialogContent ul {
+  list-style: none;
+
+  padding: 0;
+  margin: 16px 0 30px;
+}
+
+.dialogContent li {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid var(--glass-edge);
+
+  color: var(--text-muted);
+
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.dialogContent li:last-child {
+  border-bottom: 0;
+}
+
+.dialogContent li span {
+  flex-shrink: 0;
+
+  margin-right: 2px;
+
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .dialog {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+
+    border-radius: 20px;
+  }
+
+  .dialogHeader {
+    padding: 14px 18px;
+  }
+
+  .dialogContent {
+    padding: 24px 20px;
+  }
+
+  .dialogContent h3 {
+    font-size: clamp(1.8rem, 9vw, 2.5rem);
+  }
+}
+
+@media (max-width: 360px) {
+  .dialog {
+    width: calc(100% - 16px);
+    max-height: calc(100dvh - 16px);
+  }
+
+  .dialogContent {
+    padding: 22px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialogHeader button {
+    transition: none;
+  }
+}

@@ -12,7 +12,7 @@ function PartnerLogo({ partner }: { partner: Partner }) {
 }
 
 /** CODE / oEnzoRibas — continuous logo rail, independent from the project carousel. */
-export function PartnersMarquee({ partners, label = 'Marcas de referência' }: { partners: readonly Partner[]; label?: string }) {
+export function PartnersMarquee({ partners, label = 'Marcas Parceiras da CODE' }: { partners: readonly Partner[]; label?: string }) {
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const reverseTrack = useRef<HTMLDivElement>(null);

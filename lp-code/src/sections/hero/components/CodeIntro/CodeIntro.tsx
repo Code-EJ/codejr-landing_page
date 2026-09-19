@@ -4,6 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./CodeIntro.module.css";
+import { ScrollIndicator } from "../../../../components/ui";
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export function CodeIntro() {
@@ -95,11 +96,19 @@ export function CodeIntro() {
     { scope: root },
   );
   return (
-    <div ref={root} className={styles.intro} aria-hidden="true">
-      <div ref={word} className={styles.word}>
-        CODE<span>[]</span>
-      </div>
-      <span className={styles.hint}>ROLE PARA ENTRAR ↓</span>
+     <div
+    ref={root}
+    className={styles.intro}
+  >
+    <div
+      ref={word}
+      className={styles.word}
+      aria-hidden="true"
+    >
+      CODE<span>[]</span>
     </div>
+
+    <ScrollIndicator href="#about" />
+  </div>
   );
 }

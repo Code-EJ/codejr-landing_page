@@ -16,10 +16,7 @@ export function AboutSection() {
         </h2>
 
         <p>
-          Somos a CODE, uma empresa júnior de desenvolvimento de software.
-          Conectamos formação técnica e prática de projeto para construir
-          interfaces, integrar sistemas e transformar dados em informação útil.
-          Do primeiro fluxo à publicação, design e engenharia trabalham juntos.
+          Somos a Code Soluções em Tecnologia Júnior, uma empresa júnior da ciência da computação. Conectamos formação técnica e prática de projeto para construir interfaces, sistemas e transformar dados em informação útil. Do primeiro fluxo à publicação, design e engenharia trabalham juntos.
         </p>
       </div>
 
@@ -47,8 +44,7 @@ export function AboutSection() {
           <strong>Da necessidade à operação.</strong>
 
           <p>
-            Uma solução sob medida começa pelo contexto, não pela escolha da
-            ferramenta.
+            Transformamos ideias em soluções digitais, e pessoas em protagonistas.
           </p>
         </div>
 

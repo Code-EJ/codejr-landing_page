@@ -20,10 +20,6 @@ export function TestimonialsSection() {
               cuidado com cada entrega.
             </p>
           </div>
-          <p className={styles.demoNotice}>
-            Marcas de exemplo para esta prévia visual. Sua presença não indica
-            parceria ou endosso à CODE.
-          </p>
           <PartnersMarquee partners={partnerReferences} />
           <p className={styles.demoNotice}>
             Prévia de layout · Os depoimentos abaixo são demonstrativos e serão
