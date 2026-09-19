@@ -1,5 +1,0 @@
-.footer { --glass-radius: 0; border-inline: 0; border-bottom: 0; padding: 48px max(24px, calc((100vw - 1120px) / 2)) 24px; }
-.credit { font-size: .65rem; display: flex; align-items: center; gap: 8px; } .credit a:hover { color: var(--brand-neon); }
-.inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; } .brand { font-size: 1.5rem; font-weight: 800; text-decoration: none; letter-spacing: .12em; } .brand span { color: var(--brand-neon); } .inner p { color: var(--text-muted); font-size: .8rem; margin-top: 14px; } .inner nav { display: flex; gap: 28px; } .inner nav a { font-size: .8rem; text-decoration: none; padding: 12px 0; }
-.bottom { margin-top: 48px; border-top: 1px solid var(--glass-edge); padding-top: 24px; display: flex; justify-content: space-between; gap: 24px; font-size: .7rem; color: var(--text-muted); } .bottom a { text-decoration: none; }
-@media (max-width: 640px) { .inner, .bottom { flex-direction: column; } .inner nav { flex-wrap: wrap; gap: 20px; } }
