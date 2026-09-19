@@ -36,7 +36,7 @@ describe("Contato CODE", () => {
     expect(screen.getByText(/aguardando ativação/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute(
       "href",
-      expect.stringContaining("https://wa.me/5531973100592?text="),
+      expect.stringContaining("https://wa.me/5531973100584?text="),
     );
     expect(
       screen.getByRole("link", { name: "contato@juniorcode.com.br" }),
