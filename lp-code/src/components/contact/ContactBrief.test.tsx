@@ -51,7 +51,8 @@ describe("Contato CODE", () => {
     render(<ContactBrief />);
     fill();
     fireEvent.submit(screen.getByRole("form"));
-    await screen.findByText(/Mensagem aceita pelo serviço/);
+    await screen.findByText("Mensagem enviada.");
+    expect(screen.getByRole("status")).toHaveTextContent(/Seu briefing chegou à CODE/);
     const payload = JSON.parse(fetchMock.mock.calls[0][1].body);
     expect(payload).toMatchObject({
       access_key: "test-key",
@@ -60,6 +61,8 @@ describe("Contato CODE", () => {
       message: "Gostaria de construir um site.",
       botcheck: false,
     });
+    expect(screen.queryByLabelText("Como podemos chamar você?")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Enviar outra mensagem/ }));
     expect(screen.getByLabelText("Como podemos chamar você?")).toHaveValue("");
   });
   it.each(["rejected", "network"])(
@@ -85,7 +88,7 @@ describe("Contato CODE", () => {
         "Gostaria de construir um site.",
       );
       expect(
-        screen.queryByText(/Mensagem aceita pelo serviço/),
+        screen.queryByText(/Mensagem enviada/),
       ).not.toBeInTheDocument();
     },
   );
