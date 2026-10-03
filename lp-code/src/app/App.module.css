@@ -244,6 +244,10 @@
   gap: 80px;
   padding-block: 130px;
   align-items: center;
+  min-width: 0;
+}
+.contact > * {
+  min-width: 0;
 }
 .contactText {
   max-width: 420px;
@@ -269,6 +273,9 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 30px;
 }
 .contactForm label {
@@ -279,6 +286,7 @@
 .contactForm select,
 .contactForm textarea {
   width: 100%;
+  min-width: 0;
   min-height: 46px;
   border: 1px solid var(--glass-edge);
   border-radius: 12px;
@@ -457,8 +465,17 @@
   }
   .contact {
     grid-template-columns: 1fr;
-    padding-bottom: 76px;
-    gap: 36px;
+    align-items: stretch;
+    padding-block: 92px 76px;
+    gap: 32px;
+  }
+  .contactText {
+    max-width: 100%;
+  }
+  .contactForm {
+    max-width: 620px;
+    margin-inline: auto;
+    padding: 24px;
   }
   .projectPreview {
     grid-template-columns: 1fr;
@@ -468,6 +485,37 @@
   }
   .floatingTag {
     right: 0;
+  }
+}
+@media (max-width: 480px) {
+  .section {
+    padding-inline: 16px;
+  }
+  .contact {
+    padding-block: 72px 64px;
+    gap: 28px;
+  }
+  .contactSteps {
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .contactSteps strong {
+    margin-left: 10px;
+  }
+  .contactForm {
+    padding: 20px 18px;
+  }
+  .contactForm input,
+  .contactForm select,
+  .contactForm textarea {
+    font-size: 1rem;
+  }
+  .contactForm textarea {
+    min-height: 118px;
+  }
+  .contactForm > button {
+    width: 100%;
+    justify-content: center;
   }
 }
 @media (prefers-reduced-motion: reduce) {
