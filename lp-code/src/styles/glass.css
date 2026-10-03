@@ -10,7 +10,7 @@
   --brand-neon: #4ade80;
   --glass-rgb: 88 18 72;
   --glass-opacity: 0.5;
-  --glass-frost-rgb: 255 239 248;
+  --glass-frost-rgb: 255 100 255;
   --glass-frost-opacity: 0.055;
   --glass-saturation: 145%;
   --glass-edge: rgb(255 213 239 / 0.24);
@@ -89,7 +89,8 @@
     ),
     rgb(var(--glass-rgb) / var(--glass-opacity));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur))
+    saturate(var(--glass-saturation));
 }
 
 .liquid-glass::after {
@@ -129,7 +130,9 @@
   outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
   .liquid-glass {
     /*
      * If real backdrop blur is unavailable, increase surface density so

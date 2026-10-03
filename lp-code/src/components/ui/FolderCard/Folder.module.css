@@ -175,9 +175,9 @@
   --glass-rgb: 99 20 52;
   --glass-radius: 14px;
   --glass-opacity: 0.38;
-  --glass-frost-rgb: 255 239 248;
+  --glass-frost-rgb: 255 100 255;
   --glass-frost-opacity: 0.16;
-  --glass-blur: 16px;
+  --glass-blur: 14px;
   --glass-saturation: 135%;
   transform: translateZ(12px);
   padding: 16px;
