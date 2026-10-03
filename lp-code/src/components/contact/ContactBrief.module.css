@@ -54,7 +54,7 @@
 }
 
 .successVisual::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 22px;
   z-index: -2;
