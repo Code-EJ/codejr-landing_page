@@ -10,12 +10,25 @@
   --brand-neon: #4ade80;
   --glass-rgb: 88 18 72;
   --glass-opacity: 0.5;
+  --glass-frost-rgb: 255 239 248;
+  --glass-frost-opacity: 0.11;
+  --glass-saturation: 145%;
   --glass-edge: rgb(255 213 239 / 0.24);
   --glass-highlight: rgb(255 255 255 / 0.28);
   --glass-radius: 24px;
   --glass-blur: 22px;
   --glass-shadow: 0 20px 60px -28px rgb(0 0 0 / 0.65);
+  /*
+   * Keep the frosted luminance in the surface itself instead of relying on
+   * backdrop-filter to create it. Browsers can rasterize backdrop-filter
+   * differently across transformed/composited layers (notably in production
+   * builds and 3D scenes), while this wash remains deterministic.
+   */
   --glass-fill:
+    linear-gradient(
+      rgb(var(--glass-frost-rgb) / var(--glass-frost-opacity)),
+      rgb(var(--glass-frost-rgb) / var(--glass-frost-opacity))
+    ),
     linear-gradient(
       135deg,
       rgb(255 255 255 / 0.07),
@@ -30,6 +43,8 @@
   --text-muted: #414f65;
   --accent: #5042ac;
   --glass-rgb: 241 246 255;
+  --glass-frost-rgb: 255 255 255;
+  --glass-frost-opacity: 0.05;
   --glass-edge: rgb(255 255 255 / 0.8);
   --glass-highlight: rgb(255 255 255 / 0.9);
   --glass-shadow: 0 20px 50px -30px rgb(35 46 75 / 0.35);
@@ -41,8 +56,8 @@
   background: var(--glass-fill);
   border: 1px solid var(--glass-edge);
   border-radius: var(--glass-radius);
-  backdrop-filter: blur(var(--glass-blur)) saturate(145%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(145%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   box-shadow:
     inset 0 1px 0 var(--glass-highlight),
     inset 0 -1px 0 rgb(255 255 255 / 0.06),
@@ -101,14 +116,20 @@
   outline: 2px solid var(--accent);
   outline-offset: 4px;
 }
-@supports not (backdrop-filter: blur(1px)) {
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .liquid-glass {
-    background: rgb(var(--glass-rgb) / 0.96);
+    /*
+     * Preserve the same frosted material when blur is unavailable instead of
+     * replacing the complete layered surface with a flat dark fallback.
+     */
+    --glass-opacity: 0.84;
+    --glass-frost-opacity: 0.14;
   }
 }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .liquid-glass {
     --glass-opacity: 0.96;
+    --glass-frost-opacity: 0.04;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
