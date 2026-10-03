@@ -11,7 +11,7 @@
   --glass-rgb: 88 18 72;
   --glass-opacity: 0.5;
   --glass-frost-rgb: 255 239 248;
-  --glass-frost-opacity: 0.11;
+  --glass-frost-opacity: 0.055;
   --glass-saturation: 145%;
   --glass-edge: rgb(255 213 239 / 0.24);
   --glass-highlight: rgb(255 255 255 / 0.28);
@@ -53,16 +53,21 @@
   position: relative;
   isolation: isolate;
   color: var(--text-primary);
-  background: var(--glass-fill);
+
+  /*
+   * Keep the structural element transparent. The dedicated ::before surface
+   * owns the backdrop blur, so transforms/GSAP applied to the component do not
+   * compete with the filter on the same compositing layer.
+   */
+  background: transparent;
   border: 1px solid var(--glass-edge);
   border-radius: var(--glass-radius);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   box-shadow:
     inset 0 1px 0 var(--glass-highlight),
     inset 0 -1px 0 rgb(255 255 255 / 0.06),
     var(--glass-shadow);
 }
+
 .liquid-glass::before,
 .liquid-glass::after {
   content: "";
@@ -72,13 +77,24 @@
   pointer-events: none;
   z-index: -1;
 }
+
 .liquid-glass::before {
-  background: radial-gradient(
-    ellipse at var(--light-x, 20%) var(--light-y, 0%),
-    rgb(255 255 255 / 0.12),
-    transparent 62%
-  );
+  /*
+   * Separate composited glass surface.
+   * The fill is intentionally translucent so backdrop-filter can sample and
+   * blur what is physically behind the component.
+   */
+  background:
+    radial-gradient(
+      ellipse at var(--light-x, 20%) var(--light-y, 0%),
+      rgb(255 255 255 / 0.12),
+      transparent 62%
+    ),
+    var(--glass-fill);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
 }
+
 .liquid-glass::after {
   background: linear-gradient(
     120deg,
@@ -119,17 +135,21 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .liquid-glass {
     /*
-     * Preserve the same frosted material when blur is unavailable instead of
-     * replacing the complete layered surface with a flat dark fallback.
+     * If real backdrop blur is unavailable, increase surface density so
+     * background details do not read as fully transparent glass.
      */
-    --glass-opacity: 0.84;
-    --glass-frost-opacity: 0.14;
+    --glass-opacity: 0.82;
+    --glass-frost-opacity: 0.16;
   }
 }
+
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .liquid-glass {
     --glass-opacity: 0.96;
     --glass-frost-opacity: 0.04;
+  }
+
+  .liquid-glass::before {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
