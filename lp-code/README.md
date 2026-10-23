@@ -13,6 +13,9 @@ React + TypeScript + Vite, Tailwind CSS, CSS Modules, GSAP e Lenis.
 
 Veja [o sistema visual e os critérios de validação](docs/LANDING_PAGE.md). Créditos de colaboradores e dependências anteriores permanecem preservados; o crédito acima não representa autoria exclusiva do histórico do repositório.
 
+
+# Check out the documentation at https://deepwiki.com/Code-EJ/codejr-landing_page
+
 ## Referência do template original: React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
