@@ -5,7 +5,7 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 ![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=flat&logo=greensock&logoColor=white)
 
-> Uma linha descrevendo o propósito da Landing Page (ex: "Landing Page de alta conversão para o produto X, com foco em animações fluidas").
+> Landing Page para captura de Leads e conversão para a Empresa Júnior CODE SOLUÇÕES EM TECNOLOGIA JUNIOR.
 
 ## 🚀 Tecnologias
 
