@@ -60,7 +60,8 @@ describe("NavBar component", () => {
     openMenu();
     expect(menu).toBeVisible();
     expect(menu).not.toHaveAttribute('inert');
-    expect(within(menu).getAllByRole('link')).toHaveLength(5);
+    expect(within(menu).getAllByRole('link')).toHaveLength(6);
+    expect(within(menu).getByRole('link', { name: 'Equipe' })).toHaveAttribute('href', '#team');
   });
 
   /**

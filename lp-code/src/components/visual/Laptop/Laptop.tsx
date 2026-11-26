@@ -25,30 +25,28 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
           const lid = scene.querySelector("[data-lid]");
           const hardware =
             scene.querySelectorAll<HTMLElement>("[data-hardware]");
-          const shell = scene.querySelectorAll("[data-shell]");
+          const frame = scene.querySelector("[data-frame]");
           const base = scene.querySelector("[data-base]");
           const screen = scene.querySelector<HTMLElement>("[data-display]");
-          if (!camera || !lid || !screen) return;
+          if (!camera || !lid || !frame || !screen) return;
           scene.dataset.animated = "true";
           const mobile = Boolean(context.conditions.mobile);
-          const aperture = window.innerWidth * 0.625;
-          const cameraScale =
+          const viewportWidth = () => document.documentElement.clientWidth;
+          const aperture = () => viewportWidth() * 0.625;
+          const cameraScale = () =>
             0.78 *
             (mobile
               ? 1
-              : Math.min(1, window.innerHeight / (window.innerWidth * 0.7)));
+              : Math.min(1, window.innerHeight / (viewportWidth() * 0.7)));
           const content = screen.firstElementChild;
           if (!(content instanceof HTMLElement)) return;
-          // Fit the complete window once; no layout reads during scroll.
-          const previewScale = Math.min(
-            1,
-            aperture / Math.max(1, content.offsetHeight),
-          );
-          gsap.set(content, { scale: previewScale, transformOrigin: "50% 0" });
-          gsap.set(scene, {
-            "--display-height": `${aperture}px`,
-            "--deck-depth": `${aperture + 36}px`,
-          });
+          // Resolve geometry at setup and refresh, not during scroll.
+          const previewScale = () => Math.min(1, aperture() / Math.max(1, content.offsetHeight));
+          const closedCameraY = () => window.innerHeight * (mobile ? 0.24 : -0.22);
+          const openCameraY = () => window.innerHeight * (mobile ? 0.24 : -0.03);
+          const closedHeight = () => `${aperture()}px`;
+          gsap.set(content, { transformOrigin: "50% 0" });
+          gsap.set(scene, { "--display-height": closedHeight });
           const reserveContent = () => {
             scene.style.minHeight = `${Math.max(window.innerHeight, content.offsetHeight)}px`;
           };
@@ -81,6 +79,7 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
               pin: true,
               scrub: true,
               anticipatePin: 1,
+              invalidateOnRefresh: true,
               onToggle: (self) =>
                 gsap.set([camera, lid], {
                   willChange: self.isActive ? "transform" : "auto",
@@ -94,13 +93,13 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
                 z: mobile ? -160 : -850,
                 scale: cameraScale,
                 rotationX: -16,
-                y: window.innerHeight * (mobile ? 0.24 : 0.1),
+                y: closedCameraY,
               },
               {
                 z: mobile ? -160 : -850,
                 scale: cameraScale,
                 rotationX: -6,
-                y: window.innerHeight * (mobile ? 0.24 : 0.1),
+                y: openCameraY,
                 duration: 0.35,
               },
             )
@@ -124,33 +123,37 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
           // for its negative Z, border/shadow and subpixel projection at full zoom.
           // The deck moves below the screen before arrival; neither surface fades.
           timeline
-            .to(
-              shell,
+            .fromTo(
+              frame,
+              { scaleX: 1, scaleY: 1 },
               {
-                scaleX: 1 + 48 / window.innerWidth,
-                scaleY: 1 + 48 / window.innerHeight,
+                scaleX: () => 1 + 48 / viewportWidth(),
+                scaleY: () => 1 + 48 / window.innerHeight,
                 transformOrigin: "50% 50%",
                 duration: 0.12,
                 ease: "power2.inOut",
               },
               hardwareExitStart,
             )
-            .to(
+            .fromTo(
               base,
+              { y: 0 },
               { y: 36, duration: 0.12, ease: "power2.inOut" },
               hardwareExitStart,
             )
-            .to(
+            .fromTo(
               scene,
+              { "--display-height": closedHeight },
               {
-                "--display-height": `${window.innerHeight + 2}px`,
+                "--display-height": () => `${window.innerHeight + 2}px`,
                 duration: screenReady - 0.5,
                 ease: "power2.inOut",
               },
               0.5,
             )
-            .to(
+            .fromTo(
               content,
+              { scale: previewScale },
               {
                 scale: 1,
                 y: 0,
@@ -196,13 +199,13 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div id="services" ref={root} className={styles.scene}>
+    <div ref={root} className={styles.scene} data-laptop-scene>
       <div className={styles.camera} data-camera>
         <div className={styles.lid} data-lid>
           <div
             className={styles.frame}
             data-hardware
-            data-shell
+            data-frame
             aria-hidden="true"
           >
             <i />
@@ -210,10 +213,9 @@ export default function LaptopSection({ children }: { children: ReactNode }) {
           <div
             className={styles.back}
             data-hardware
-            data-shell
             aria-hidden="true"
           >
-            CODE<span>[]</span>
+            <strong>CODE<span>[]</span></strong>
           </div>
           <div className={styles.display} data-display>
             {children}

@@ -17,6 +17,7 @@ import {
   HeroSection,
   ProjectsSection,
   ServicesSection,
+  TeamSection,
   TestimonialsSection,
 } from "../sections";
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -70,7 +71,7 @@ export default function App() {
     { scope: root },
   );
   return (
-    <div ref={root} className={styles.page}>
+    <div id="home" ref={root} className={styles.page}>
       <CodeIntro />
       <a href="#main-content" className={styles.skipLink}>
         Pular para o conteúdo
@@ -84,6 +85,7 @@ export default function App() {
         <AboutSection />
         <ServicesSection />
         <ProjectsSection />
+        <TeamSection />
         <TestimonialsSection />
         <ContactSection />
       </main>

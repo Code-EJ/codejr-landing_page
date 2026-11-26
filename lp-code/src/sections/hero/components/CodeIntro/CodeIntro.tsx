@@ -14,7 +14,7 @@ export function CodeIntro() {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        if (!root.current || !word.current || window.location.hash) return;
+        if (!root.current || !word.current) return;
         root.current.dataset.animated = "true";
         const timeline = gsap.timeline({
           scrollTrigger: {
@@ -22,8 +22,9 @@ export function CodeIntro() {
             start: "top top",
             end: () => `+=${window.innerHeight * 1.6}`,
             pin: true,
-            scrub: 0.3,
+            scrub: true,
             anticipatePin: 1,
+            invalidateOnRefresh: true,
           },
         });
         gsap.set(root.current, { visibility: "visible", opacity: 1 });
@@ -31,11 +32,11 @@ export function CodeIntro() {
           .fromTo(
             word.current,
             {
-              z: 1050,
-              y: "30vh",
+              z: 420,
+              y: "16vh",
               rotationX: -28,
               rotationY: -16,
-              scale: 1.12,
+              scale: 1.06,
               opacity: 0,
             },
             {
@@ -108,7 +109,7 @@ export function CodeIntro() {
       CODE<span>[]</span>
     </div>
 
-    <ScrollIndicator href="#about" />
+    <ScrollIndicator href="#main-content" />
   </div>
   );
 }

@@ -5,6 +5,7 @@ const navigationLinks = [
   { label: "Sobre a CODE", href: "#about" },
   { label: "Serviços", href: "#services" },
   { label: "Projetos", href: "#projects" },
+  { label: "Equipe", href: "#team" },
   { label: "Planejar um projeto", href: "#contact" },
 ];
 

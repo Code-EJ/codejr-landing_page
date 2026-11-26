@@ -13,7 +13,8 @@ describe("Footer component", () => {
     const footer = screen.getByRole("contentinfo")
 
     expect(footer).toBeInTheDocument()
-    expect(screen.getByText(/Developed by Code/)).toBeInTheDocument()
+    expect(screen.getByText(/Developed by CODE/i)).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Equipe" })).toHaveAttribute("href", "#team")
     expect(screen.getByRole("link", { name: "oEnzoRibas" })).toHaveAttribute("href", "https://github.com/oEnzoRibas")
   })
 

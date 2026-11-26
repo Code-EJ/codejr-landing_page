@@ -87,6 +87,15 @@
   min-height: 300px;
 }
 
+.carousel:has([data-carousel-project]) .stage {
+  height: clamp(390px, 42cqw, 460px);
+}
+
+.textContent:has(> [data-carousel-project]) {
+  display: block;
+  padding: 0;
+}
+
 /* =========================================================
    SLIDE
    ========================================================= */
@@ -327,45 +336,33 @@
 
 .glassButton,
 .playButton {
+  --glass-radius: 14px;
+  --glass-opacity: 0.26;
   flex: 0 0 auto;
-
   display: inline-flex;
   justify-content: center;
   align-items: center;
-
-  min-width: 46px;
-  min-height: 46px;
-
-  padding: 10px;
-
-  border: 1px solid #ffffff24;
-  border-radius: 50%;
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff16,
-      #ffffff03
-    );
-
-  color: #eee8f1;
-
-  box-shadow:
-    inset 0 1px 0 #ffffff24,
-    0 5px 12px #0002;
-
-  backdrop-filter: blur(14px);
-
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
+  color: var(--text-primary);
   font: inherit;
-  font-size: 1.2rem;
-
+  font-size: .78rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.playButton {
-  margin-left: 8px;
+.glassButton svg,
+.playButton svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
 
-  font-size: 1rem;
+.playButton {
+  padding-inline: 10px;
+  color: var(--text-muted);
 }
 
 /* =========================================================
@@ -375,57 +372,34 @@
 .dots {
   display: flex;
   align-items: center;
-
   overflow-x: auto;
-  overflow-y: hidden;
-
   min-width: 0;
   max-width: 60%;
-
-  padding: 0 8px;
-
-  border: 1px solid #ffffff14;
-  border-radius: 30px;
-
-  background: #ffffff04;
+  padding: 0 4px;
 }
 
 .dot {
   display: grid;
   place-items: center;
-
   flex: 0 0 28px;
-
   height: 44px;
-
   border: 0;
-
   padding: 0;
-
   background: transparent;
-
   cursor: pointer;
-
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
 .dot span {
-  width: 5px;
-  height: 5px;
-
+  width: 18px;
+  height: 4px;
   border-radius: 8px;
-
   background: #827b8b;
 }
 
-.dot[aria-current="true"] {
-  flex-basis: 36px;
-}
-
 .dot[aria-current="true"] span {
-  width: 22px;
-
-  background: #e0cde8;
+  background: var(--accent);
+  box-shadow: 0 0 9px #e5a4ce70;
 }
 
 /* =========================================================
@@ -501,7 +475,9 @@
 @media (hover: hover) and (pointer: fine) {
   .glassButton:hover,
   .playButton:hover {
-    border-color: var(--glass-highlight);
+    --glass-opacity: 0.45;
+    border-color: var(--accent);
+    color: var(--text-primary);
   }
 
   .previewLeft:hover,
@@ -517,6 +493,12 @@
 /* =========================================================
    CONTAINER
    ========================================================= */
+
+@container (max-width: 760px) {
+  .carousel:has([data-carousel-project]) .stage { height: 550px; }
+  .carousel:has([data-carousel-project]) .slideShell { inset-inline: 0; }
+  .carousel:has([data-carousel-project]) :is(.previewLeft, .previewRight) { display: none; }
+}
 
 @container (max-width: 600px) {
   .stage {
@@ -549,6 +531,14 @@
 
   .controls {
     gap: 8px;
+  }
+
+  .glassButton {
+    padding-inline: 10px;
+  }
+
+  .controlLabel {
+    display: none;
   }
 }
 

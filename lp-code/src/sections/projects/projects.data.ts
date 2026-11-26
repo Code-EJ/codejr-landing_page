@@ -1,44 +1,59 @@
-export const projectData = [
+import agendaflow from "../../assets/projects/agendaflow.jpg";
+import aurora from "../../assets/projects/aurora.webp";
+import insightlab from "../../assets/projects/insightlab.webp";
+import menuverse from "../../assets/projects/menuverse.jpg";
+
+export interface Project {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  repository: string;
+  siteUrl?: string;
+  image: string;
+  imageAlt: string;
+}
+
+export const projectData: Project[] = [
   {
-    id: "erp",
-    name: "Gestão em um só lugar.",
+    id: "menuverse",
+    name: "MenuVerse",
+    category: "Cardápio digital e gestão de pedidos",
     description:
-      "Centralize processos, informações e operações em sistemas desenvolvidos para a realidade do seu negócio.",
-    kind: "ERP · Sistemas internos · Gestão",
+      "Da escolha no cardápio à fila da cozinha. O cliente personaliza e acompanha o pedido, enquanto a equipe gerencia produtos e atualiza o preparo.",
+    repository: "https://github.com/Code-EJ/MenuVerse",
+    image: menuverse,
+    imageAlt: "Cardápio do MenuVerse com os hambúrgueres mais pedidos da Brasa & Co.",
   },
   {
-    id: "web",
-    name: "Sua presença digital, bem construída.",
+    id: "insightlab",
+    name: "InsightLab",
+    category: "Análise de dados para varejo",
     description:
-      "Sites e experiências web responsivas que aproximam sua marca das pessoas e transformam visitas em oportunidades.",
-    kind: "Sites · Landing pages · Aplicações web",
+      "Transforma históricos de vendas em indicadores, rankings e previsões. A demonstração permite filtrar períodos, importar CSVs e simular cenários de receita.",
+    repository: "https://github.com/Code-EJ/InsightLab",
+    image: insightlab,
+    imageAlt: "Painel do InsightLab com filtros, indicadores de vendas e gráficos de receita.",
   },
   {
-    id: "dashboard",
-    name: "Decisões começam com informação.",
+    id: "aurora-odontologia",
+    name: "Aurora Odontologia",
+    category: "Site institucional e captação de contatos",
     description:
-      "Transformamos dados dispersos em indicadores e dashboards claros para acompanhar o que realmente importa.",
-    kind: "Dashboards · BI · Visualização de dados",
+      "Site de portfólio para uma clínica fictícia. A experiência apresenta tratamentos, equipe e dúvidas frequentes, com um formulário que recebe o interesse do visitante.",
+    repository: "https://github.com/Code-EJ/Aurora-Odontologia",
+    siteUrl: "https://code-ej.github.io/Aurora-Odontologia/",
+    image: aurora,
+    imageAlt: "Página inicial do site da Aurora Odontologia em desktop e celular.",
   },
   {
-    id: "analytics",
-    name: "Encontre respostas nos seus dados.",
+    id: "agendaflow",
+    name: "AgendaFlow",
+    category: "Agendamento online e gestão de horários",
     description:
-      "Organizamos, analisamos e visualizamos informações para revelar padrões, oportunidades e pontos de melhoria.",
-    kind: "Análise de dados · Métricas · Insights",
-  },
-  {
-    id: "data-science",
-    name: "Antecipe o próximo passo.",
-    description:
-      "Aplicamos estatística e aprendizado de máquina para desenvolver modelos capazes de apoiar previsões e decisões.",
-    kind: "Data Science · Machine Learning · Predição",
-  },
-  {
-    id: "automation",
-    name: "Automatize o que não precisa ser manual.",
-    description:
-      "Conectamos sistemas e automatizamos processos para reduzir tarefas repetitivas e tornar a operação mais eficiente.",
-    kind: "APIs · Integrações · Automação",
+      "Clientes escolhem serviço, profissional e horário pelo portal. A equipe administra reservas, disponibilidade e indicadores em um painel próprio.",
+    repository: "https://github.com/Code-EJ/AgendaFlow",
+    image: agendaflow,
+    imageAlt: "Painel do AgendaFlow com indicadores e gráfico de agendamentos do Studio Bloom.",
   },
 ];

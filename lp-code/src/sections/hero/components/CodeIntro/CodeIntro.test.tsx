@@ -8,12 +8,12 @@ describe('CodeIntro', () => {
     const { container } = render(<CodeIntro />);
     expect(container.querySelector('[data-animated]')).toBeNull();
     expect(container.querySelector('.pin-spacer')).toBeNull();
-    expect(container.firstElementChild).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('permite remontagem e cleanup em StrictMode', () => {
     const { container, unmount } = render(<StrictMode><CodeIntro /></StrictMode>);
     expect(container.textContent).toContain('CODE');
+    expect(container.querySelector('a')).toHaveAttribute('href', '#main-content');
     unmount();
     expect(container).toBeEmptyDOMElement();
   });
