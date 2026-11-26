@@ -57,9 +57,12 @@ export default function Carousel({ items = EMPTY_ITEMS, autoPlay = false, interv
   const rootRef = useRef<HTMLElement>(null);
   const slideKey = current ? `${typeof current.id}:${current.id}:${current.type}:${current.type === 'text' ? '' : current.src}` : 'empty';
   const { tilt, resetTilt, buttonMotion } = useCarouselMotion(rootRef, stageRef, slideKey, direction, reduced);
-  const preview = (item: CarouselItem) => item.type === 'image'
-    ? <img src={item.src} alt="" draggable={false} />
-    : <div className={styles.previewArt}><span>CODE<span className={styles.previewMark}>[]</span></span><small>{item.title ?? (item.type === 'video' ? 'Motion & stories' : 'Design & tecnologia')}</small></div>;
+  const preview = (item: CarouselItem) => {
+    const src = item.type === 'text' ? item.previewSrc
+      : item.type === 'image' ? item.src : undefined;
+    if (src) return <img src={src} alt="" draggable={false} />;
+    return <div className={styles.previewArt}><span>CODE<span className={styles.previewMark}>[]</span></span><small>{item.title ?? (item.type === 'video' ? 'Motion & stories' : 'Design & tecnologia')}</small></div>;
+  };
   const navigate = (action: () => void) => { setPlayingId(null); setInteracted(true); action(); };
   const pointerDown = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType === 'mouse' || (event.target as HTMLElement).closest('button, a, input, textarea, select, video, [contenteditable="true"]')) return;
@@ -102,12 +105,33 @@ export default function Carousel({ items = EMPTY_ITEMS, autoPlay = false, interv
       )}
       {total > 1 && (
         <div className={styles.controls}>
-          <button type="button" className={`liquid-glass ${styles.glassButton}`} aria-label="Item anterior" onClick={() => navigate(previous)}><span aria-hidden="true">←</span></button>
+          <button type="button" className={`liquid-glass ${styles.glassButton}`} aria-label="Item anterior" onClick={() => navigate(previous)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M19 12H5m6-6-6 6 6 6" />
+            </svg>
+            <span className={styles.controlLabel}>Anterior</span>
+          </button>
           <div className={styles.dots} aria-label="Escolher slide">
             {validItems.map((item, i) => <button type="button" key={item.id} className={styles.dot} aria-label={`Ir para o slide ${i + 1}`} aria-current={index === i ? 'true' : undefined} onClick={() => navigate(() => goTo(i))}><span /></button>)}
           </div>
-          <button type="button" className={`liquid-glass ${styles.glassButton}`} aria-label="Próximo item" onClick={() => navigate(next)}><span aria-hidden="true">→</span></button>
-          {!reduced && <button type="button" className={`liquid-glass ${styles.playButton}`} aria-label={wantsPlay ? 'Pausar reprodução automática' : 'Iniciar reprodução automática'} onClick={() => { setPlayOverride(!wantsPlay); setFocusPaused(false); }}><span aria-hidden="true">{wantsPlay ? 'Ⅱ' : '▷'}</span></button>}
+          <button type="button" className={`liquid-glass ${styles.glassButton}`} aria-label="Próximo item" onClick={() => navigate(next)}>
+            <span className={styles.controlLabel}>Próximo</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12h14m-6-6 6 6-6 6" />
+            </svg>
+          </button>
+          {!reduced && (
+            <button
+              type="button"
+              className={`liquid-glass ${styles.playButton}`}
+              aria-label={wantsPlay ? 'Pausar reprodução automática' : 'Iniciar reprodução automática'}
+              onClick={() => { setPlayOverride(!wantsPlay); setFocusPaused(false); }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d={wantsPlay ? 'M9 5v14m6-14v14' : 'M9 5v14l10-7z'} />
+              </svg>
+            </button>
+          )}
         </div>
       )}
       <span className={styles.srOnly} aria-live={wantsPlay && !reduced && !focusPaused && !hovered && !hidden && playingId === null ? 'off' : 'polite'} aria-atomic="true">{interacted && current ? `Slide ${index + 1} de ${total}${current.title ? ': ' + current.title : ''}` : ''}</span>

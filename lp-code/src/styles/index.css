@@ -4,7 +4,13 @@
   box-sizing: border-box;
 }
 html {
-  scroll-padding-top: 110px;
+  --anchor-padding: 110px;
+  scroll-padding-top: var(--anchor-padding);
+}
+
+/* The hero starts immediately after the intro pin. Reach the handoff itself. */
+#main-content {
+  scroll-margin-top: calc(-1 * var(--anchor-padding));
 }
 body {
   margin: 0;

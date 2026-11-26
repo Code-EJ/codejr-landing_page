@@ -14,6 +14,7 @@
   display: none;
 }
 .scene[data-animated] {
+  --deck-depth: calc(62.5vw + 36px);
   perspective: 1200px;
   perspective-origin: 50% 50svh;
 }
@@ -53,6 +54,7 @@
   border-radius: 22px;
   background: #29222d;
   transform: translateZ(-2px);
+  backface-visibility: hidden;
   box-shadow:
     0 0 0 2px #a397a8,
     0 0 0 4px #302734;
@@ -82,6 +84,11 @@
   transform: translateZ(-5px) rotateY(180deg);
   backface-visibility: hidden;
 }
+.back strong {
+  transform: rotate(180deg);
+  font-weight: inherit;
+}
+
 .back span {
   color: var(--brand-neon);
 }

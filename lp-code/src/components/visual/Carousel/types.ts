@@ -5,7 +5,7 @@ type BaseItem = { id: string | number; alt?: string; title?: string };
 export type CarouselItem = BaseItem & (
   | { type: 'image'; src: string }
   | { type: 'video'; src: string; videoProps?: { autoPlay?: boolean; muted?: boolean; loop?: boolean; controls?: boolean; poster?: string } }
-  | { type: 'text'; content: ReactNode }
+  | { type: 'text'; content: ReactNode; previewSrc?: string }
 );
 
 export interface CarouselProps {

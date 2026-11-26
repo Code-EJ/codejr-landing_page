@@ -1,59 +1,43 @@
-import styles from "../../app/App.module.css";
+import type { Project } from "./projects.data";
+import styles from "./ProjectsSection.module.css";
 
-interface ProjectPreviewProps {
-  name: string;
-  kind: string;
-  description: string;
-  index: number;
-}
+export function ProjectPreview({ project }: { project: Project }) {
+  const { name, category, description, repository, siteUrl, image, imageAlt } = project;
+  const actionLabel = siteUrl ? "Visitar site" : "Ver demonstração";
 
-export function ProjectPreview({
-  name,
-  kind,
-  description,
-  index,
-}: ProjectPreviewProps) {
   return (
-    <div className={styles.projectPreview}>
-      <div className={styles.projectCopy}>
-        <p className={styles.eyebrow}>CONCEITO / 0{index}</p>
-
+    <article className={styles.project} data-carousel-project>
+      <div className={styles.copy}>
+        <p className={styles.category}>{category}</p>
         <h3>{name}</h3>
-        <p>{kind}</p>
-        <p>{description}</p>
-
-      </div>
-
-      <div className={styles.projectScreen} aria-hidden="true">
-        <div className={styles.screenTop}>
-          <span>CODE / STUDIO</span>
-          <span>•••</span>
-        </div>
-
-        <div className={styles.screenContent}>
-          <span className={styles.screenTag}>CREATE SOMETHING NEW</span>
-
-          <strong>
-            {index === 1
-              ? "Menos ruído. Mais foco."
-              : index === 2
-                ? "Cada dado, uma direção."
-                : "Sua próxima ideia começa aqui."}
-          </strong>
-
-          <div className={styles.chart}>
-            {[40, 65, 48, 82, 62, 92].map((height, i) => (
-              <i key={i} style={{ height: `${height}%` }} />
-            ))}
-          </div>
-
-          <div className={styles.screenLines}>
-            <i />
-            <i />
-            <i />
-          </div>
+        <p className={styles.description}>{description}</p>
+        <div className={styles.actions}>
+          <a
+            className="liquid-glass glass-action"
+            href={siteUrl ?? `${repository}#demonstração-da-plataforma`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${actionLabel} de ${name} (nova aba)`}
+          >
+            {actionLabel} <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            className={styles.link}
+            href={repository}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Repositório de ${name} no GitHub (nova aba)`}
+          >
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
         </div>
       </div>
-    </div>
+      <img
+        className={styles.screenshot}
+        src={image}
+        alt={imageAlt}
+        decoding="async"
+      />
+    </article>
   );
 }

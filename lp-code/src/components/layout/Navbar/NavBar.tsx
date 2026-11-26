@@ -4,7 +4,14 @@ import gsap from 'gsap';
 import { cn } from '../../../lib/cn';
 import styles from './NavBar.module.css';
 
-const LINKS = [{ href: '#home', label: 'Início' }, { href: '#about', label: 'Sobre nós' }, { href: '#services', label: 'Serviços' }, { href: '#projects', label: 'Destaques' }, { href: '#contact', label: 'Contato' }];
+const LINKS = [
+  { href: '#home', label: 'Início' },
+  { href: '#about', label: 'Sobre nós' },
+  { href: '#services', label: 'Serviços' },
+  { href: '#projects', label: 'Projetos' },
+  { href: '#team', label: 'Equipe' },
+  { href: '#contact', label: 'Contato' },
+];
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function Navbar({ className }: { className?: string }) {

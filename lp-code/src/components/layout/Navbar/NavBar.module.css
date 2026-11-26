@@ -57,6 +57,20 @@
   padding: 12px;
   --glass-opacity: 0.9;
 }
+
+/* Clip the filtered surface itself so it keeps its shape over pinned content. */
+.bar::before,
+.mobile::before {
+  clip-path: inset(0 round var(--glass-radius));
+}
+
+/* The bar already blurs the backdrop. Its buttons only need their tint. */
+.cta::before,
+.toggle::before {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .mobile a {
   display: flex;
   justify-content: space-between;

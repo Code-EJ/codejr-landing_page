@@ -3,7 +3,7 @@ import styles from "../../app/App.module.css";
 
 export function HeroSection() {
   return (
-    <section id="home" className={styles.hero}>
+    <section className={styles.hero}>
       <div className={styles.heroCopy} data-hero-copy>
         <p className={styles.eyebrow}>
           <span className={styles.statusDot} />
